@@ -47,14 +47,14 @@ namespace Rabbit.Tests.World.Parser
 
         private void IsCompteur(Compteur compteur, int x, int y)
         {
-            Assert.Equal(x, compteur.X);
-            Assert.Equal(y, compteur.Y);
+            Assert.Equal(x, compteur.Pos.X);
+            Assert.Equal(y, compteur.Pos.Y);
         }
 
         private static void IsPlayer(Player player, int x, int y, int score, PlayerState state)
         {
-            Assert.Equal(x, player.X);
-            Assert.Equal(y, player.Y);
+            Assert.Equal(x, player.Pos.X);
+            Assert.Equal(y, player.Pos.Y);
             Assert.Equal(score, player.Score);
             Assert.Equal(state, player.State);
         }
