@@ -1,7 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rabbit", "Rabbit\Rabbit.csproj", "{1CA63210-F78C-4605-88C9-D0671CE83E85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rabbit.Tests", "Rabbit.Tests\Rabbit.Tests.csproj", "{1343222A-4F17-415A-809D-F880FF6C5D49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +17,10 @@ Global
 		{1CA63210-F78C-4605-88C9-D0671CE83E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CA63210-F78C-4605-88C9-D0671CE83E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CA63210-F78C-4605-88C9-D0671CE83E85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1343222A-4F17-415A-809D-F880FF6C5D49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1343222A-4F17-415A-809D-F880FF6C5D49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1343222A-4F17-415A-809D-F880FF6C5D49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1343222A-4F17-415A-809D-F880FF6C5D49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
