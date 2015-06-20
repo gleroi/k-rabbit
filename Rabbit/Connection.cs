@@ -12,12 +12,13 @@ namespace Rabbit
     {
         public string Host { get; private set; }
         public int Port { get; private set; }
-        private ISocket server;
+        private readonly ISocket server;
 
-        public Connection(string host, int port)
+        public Connection(string host, int port, ISocket socket)
         {
             this.Host = host;
             this.Port = port;
+            this.server = socket;
         }
 
         public void Connect()
