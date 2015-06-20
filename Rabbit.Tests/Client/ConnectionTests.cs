@@ -12,11 +12,23 @@ namespace Rabbit.Tests.Client
     public class ConnectionTests
     {
         readonly Connection conn;
-        readonly Mock<ISocket> socket;
+        readonly SocketFake socket;
+
         public ConnectionTests()
         {
-            this.socket = new Mock<ISocket>();
-            this.conn = new Connection("whatever", 2626, socket.Object);
+            this.socket = new SocketFake();
+            this.conn = new Connection("whatever", 2626, socket);
+        }
+
+        private void GivenSocketReceive(string msg)
+        {
+            this.socket.ReceiveData.Add(msg);
+        }
+
+
+        void ThenSocketSended(byte[] data)
+        {
+            Assert.Contains(data, this.socket.SendedData);
         }
 
         [Fact]
@@ -26,17 +38,20 @@ namespace Rabbit.Tests.Client
             this.conn.Send("first message");
 
             byte[] sendedData = Encoding.ASCII.GetBytes(sendedMsg);
-            this.socket.Verify(socket => socket.Send(sendedData), Times.Once);
+            this.ThenSocketSended(sendedData);
         }
 
         [Fact]
         public void ReceivedEnmpty_ShouldThrowMessageInconnu()
         {
-            var ex = Assert.Throws<InvalidOperationException>(() => this.conn.Receive());
+            this.GivenSocketReceive("Inscription OK");
 
-            Assert.Equal("message inconnu: ", ex.Message);
-            this.socket.Verify(socket => socket.Receive(It.IsAny<byte[]>()), Times.Once);
+            var msg = this.conn.Receive();
+
+            Assert.Equal(MessageType.InscriptionOk, msg.Type);
+            Assert.Equal("Inscription OK", msg.Data);
         }
+
 
     }
 }
