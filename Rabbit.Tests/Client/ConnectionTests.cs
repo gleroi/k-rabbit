@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Moq;
+using Rabbit.Client;
 using Xunit;
 
 namespace Rabbit.Tests.Client

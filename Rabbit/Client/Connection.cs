@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace Rabbit
+namespace Rabbit.Client
 {
 
     class Connection
@@ -72,7 +72,6 @@ namespace Rabbit
 
             try
             {
-
                 do
                 {
                     recvLen = this.server.Receive(recvData);
