@@ -74,6 +74,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client\Socket.cs" />
+    <Compile Include="World\UnexpectedTokenException.cs" />
+    <Compile Include="World\WorldParser.cs" />
+    <Compile Include="World\WorldState.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
