@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Rabbit
 {
-    interface ISocket
+    public interface ISocket
     {
         void Connect(string host, int port);
         int Send(byte[] data);

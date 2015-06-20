@@ -54,7 +54,7 @@ namespace Rabbit
             else
             {
                 Log.Write("Unknown message: " + data);
-                throw new InvalidOperationException("message inconnu " + data);
+                throw new InvalidOperationException("message inconnu: " + data);
             }
 
             Log.Write("Message Recu: " + msg.Type.ToString());
