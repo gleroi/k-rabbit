@@ -12,7 +12,7 @@ namespace Rabbit.Tests
     {
         public static WorldState WithOnePlayerAt(int x, int y)
         {
-            var parser = new WorldParser("worldstate::1;joueur1," + x + "," + y + ",0,playing;9,9;joueur1,0,5;");
+            var parser = new WorldParser("worldstate::1;joueur1," + x + "," + y + ",0,playing;9,9:11,9;joueur1,0,5;");
             var world = parser.Parse();
 
             Assert.NotNull(world);

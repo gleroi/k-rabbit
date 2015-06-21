@@ -43,5 +43,37 @@ namespace Rabbit.Tests.World
             ACompteur.Is(nworld.Compteurs[0], x, y);
             Assert.True(nworld.Players[0].HasCompteur);
         }
+
+        [Fact]
+        public void HaveCompteur_ShouldKeepIt() {
+            var world = AWorld.WithOnePlayerAt(11, 9);
+
+            ACompteur.Is(world.Compteurs[0], 9, 9);
+            Assert.Equal(1, world.Players[0].CompteurId);
+
+            world = world.ApplyAction(0, Direction.O);
+
+            Assert.Equal(1, world.Players[0].CompteurId);
+            ACompteur.Is(world.Compteurs[0], 9, 9);
+            ACompteur.Is(world.Compteurs[1], 10, 9);
+
+            world = world.ApplyAction(0, Direction.O);
+
+            Assert.Equal(0, world.Players[0].CompteurId);
+            ACompteur.Is(world.Compteurs[0], 9, 9);
+            ACompteur.Is(world.Compteurs[1], 9, 9);
+
+            world = world.ApplyAction(0, Direction.O);
+
+            Assert.Equal(0, world.Players[0].CompteurId);
+            ACompteur.Is(world.Compteurs[0], 8, 9);
+            ACompteur.Is(world.Compteurs[1], 9, 9);
+
+            world = world.ApplyAction(0, Direction.O);
+            Assert.Equal(0, world.Players[0].CompteurId);
+            ACompteur.Is(world.Compteurs[0], 7, 9);
+            ACompteur.Is(world.Compteurs[1], 9, 9);
+
+        }
     }
 }

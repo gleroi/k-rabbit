@@ -12,8 +12,8 @@ namespace Rabbit.Tests.World
     {
         internal static void Is(Compteur compteur, int x, int y)
         {
-            Assert.Equal(compteur.Pos.X, x);
-            Assert.Equal(compteur.Pos.Y, y);
+            Assert.Equal(x, compteur.Pos.X);
+            Assert.Equal(y, compteur.Pos.Y);
         }
     }
 }

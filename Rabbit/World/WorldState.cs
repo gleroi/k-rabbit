@@ -58,6 +58,7 @@ namespace Rabbit.World
 
         public Point Caddy { get; private set; }
         public bool HasCompteur { get; private set; }
+        public int CompteurId { get; private set; }
 
         public Player(int x , int y, int score, PlayerState state)
             : this()
@@ -67,10 +68,11 @@ namespace Rabbit.World
             this.State = state;
         }
 
-        public void Update(Point caddy, bool hasCompteur)
+        public void Update(Point caddy, bool hasCompteur, int compteur)
         {
             this.Caddy = caddy;
             this.HasCompteur = hasCompteur;
+            this.CompteurId = compteur;
         }
     }
 
@@ -133,8 +135,8 @@ namespace Rabbit.World
             {
                 var player = this.Players[i];
                 var caddy = this.Caddies[i];
-                var hasCompteur = this.Compteurs.Any(cp => cp.Pos == player.Pos);
-                player.Update(caddy.Pos, hasCompteur);
+                var compteur = this.Compteurs.FindIndex(cp => cp.Pos == player.Pos);
+                player.Update(caddy.Pos, compteur != -1, compteur);
                 this.Players[i] = player;
             }
         }
@@ -153,8 +155,7 @@ namespace Rabbit.World
                 nplayers[iplayer] = new Player(npos.X, npos.Y, player.Score, PlayerState.Playing);
                 if (player.HasCompteur)
                 {
-                    var icpt = ncompteurs.FindIndex(cp => cp.Pos == player.Pos);
-                    ncompteurs[icpt] = new Compteur(npos.X, npos.Y);
+                    ncompteurs[player.CompteurId] = new Compteur(npos.X, npos.Y);
                 }
             }
             else
