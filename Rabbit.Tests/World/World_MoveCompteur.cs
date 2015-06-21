@@ -59,20 +59,20 @@ namespace Rabbit.Tests.World
 
             world = world.ApplyAction(0, Direction.O);
 
-            Assert.Equal(0, world.Players[0].CompteurId);
+            Assert.Equal(1, world.Players[0].CompteurId);
             ACompteur.Is(world.Compteurs[0], 9, 9);
             ACompteur.Is(world.Compteurs[1], 9, 9);
 
             world = world.ApplyAction(0, Direction.O);
 
-            Assert.Equal(0, world.Players[0].CompteurId);
-            ACompteur.Is(world.Compteurs[0], 8, 9);
-            ACompteur.Is(world.Compteurs[1], 9, 9);
+            Assert.Equal(1, world.Players[0].CompteurId);
+            ACompteur.Is(world.Compteurs[0], 9, 9);
+            ACompteur.Is(world.Compteurs[1], 8, 9);
 
             world = world.ApplyAction(0, Direction.O);
-            Assert.Equal(0, world.Players[0].CompteurId);
-            ACompteur.Is(world.Compteurs[0], 7, 9);
-            ACompteur.Is(world.Compteurs[1], 9, 9);
+            Assert.Equal(1, world.Players[0].CompteurId);
+            ACompteur.Is(world.Compteurs[0], 9, 9);
+            ACompteur.Is(world.Compteurs[1], 7, 9);
 
         }
     }

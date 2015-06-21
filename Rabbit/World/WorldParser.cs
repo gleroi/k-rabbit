@@ -91,7 +91,7 @@ namespace Rabbit.World
             var caddies = ReadCaddies();
             Read(';');
 
-            return new WorldState(round, players, compteurs, caddies);
+            return WorldState.Create(round, players, compteurs, caddies);
         }
         
         private List<Player> ReadPlayers()

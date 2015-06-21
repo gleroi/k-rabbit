@@ -57,7 +57,7 @@ namespace Rabbit.World
         public readonly PlayerState State;
 
         public Point Caddy { get; private set; }
-        public bool HasCompteur { get; private set; }
+        public bool HasCompteur { get { return this.CompteurId != -1; } }
         public int CompteurId { get; private set; }
 
         public Player(int x , int y, int score, PlayerState state)
@@ -66,13 +66,17 @@ namespace Rabbit.World
             this.Pos = new Point(x, y);
             this.Score = score;
             this.State = state;
+            this.CompteurId = -1;
         }
 
-        public void Update(Point caddy, bool hasCompteur, int compteur)
+        public void UpdateCompteur(int compteur)
+        {
+            this.CompteurId = compteur;
+        }
+
+        public void UpdateCaddy(Point caddy)
         {
             this.Caddy = caddy;
-            this.HasCompteur = hasCompteur;
-            this.CompteurId = compteur;
         }
     }
 
@@ -118,14 +122,19 @@ namespace Rabbit.World
 
         private CellState[] Map = new CellState[MAP_WIDTH * MAP_HEIGHT];
 
-        public WorldState(int round, List<Player> players, List<Compteur> compteurs, List<Caddy> caddies)
+        private WorldState(int round, List<Player> players, List<Compteur> compteurs, List<Caddy> caddies)
         {
             this.Round = round;
             this.Players = players;
             this.Compteurs = compteurs;
             this.Caddies = caddies;
+        }
 
-            Initialize();
+        public static WorldState Create(int round, List<Player> players, List<Compteur> compteurs, List<Caddy> caddies)
+        {
+            var world = new WorldState(round, players, compteurs, caddies);
+            world.Initialize();
+            return world;
         }
 
         private void Initialize()
@@ -135,11 +144,22 @@ namespace Rabbit.World
             {
                 var player = this.Players[i];
                 var caddy = this.Caddies[i];
-                var compteur = this.Compteurs.FindIndex(cp => cp.Pos == player.Pos);
-                player.Update(caddy.Pos, compteur != -1, compteur);
+                player.UpdateCaddy(caddy.Pos);
+                this.CheckCompteur(ref player);
                 this.Players[i] = player;
             }
         }
+
+        void CheckCompteur(ref Player player)
+        {
+            if (!player.HasCompteur)
+            {
+                var pos = player.Pos;
+                var compteur = this.Compteurs.FindIndex(cp => cp.Pos == pos);
+                player.UpdateCompteur(compteur);
+            }
+        }
+
 
         public WorldState ApplyAction(int iplayer, Direction direction)
         {
@@ -152,11 +172,17 @@ namespace Rabbit.World
 
             if (this.IsValidMove(iplayer, npos))
             {
-                nplayers[iplayer] = new Player(npos.X, npos.Y, player.Score, PlayerState.Playing);
+                var nplayer = new Player(npos.X, npos.Y, player.Score, PlayerState.Playing);
                 if (player.HasCompteur)
                 {
                     ncompteurs[player.CompteurId] = new Compteur(npos.X, npos.Y);
+                    nplayer.UpdateCompteur(player.CompteurId);
                 }
+                else
+                {
+                    CheckCompteur(ref nplayer);
+                }
+                nplayers[iplayer] = nplayer;
             }
             else
             {
