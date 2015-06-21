@@ -54,12 +54,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APlayer.cs" />
     <Compile Include="Client\ConnectionTests.cs" />
     <Compile Include="Client\SocketFake.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="World\Parser\ParserTests.cs" />
     <Compile Include="World\Parser\ReadDigitTests.cs" />
     <Compile Include="World\Parser\WorldParserTests.cs" />
+    <Compile Include="World\World_ApplyActionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rabbit\Rabbit.csproj">

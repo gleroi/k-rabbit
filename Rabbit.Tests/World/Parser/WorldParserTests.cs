@@ -14,7 +14,7 @@ namespace Rabbit.Tests.World.Parser
         public void ValidWorld_ShouldSucceed()
         {
             var msg = "worldstate::25;joueur1,12,15,2,playing:joueur2,21,51,-3,stunned;" +
-                "5,1:42,64;joueur1,5023,-8963:joueur1,12,15;";
+                "12,15:42,64;joueur1,5023,-8963:joueur2,12,15;";
             var parser = new WorldParser(msg);
             var world = parser.Parse();
 
@@ -26,17 +26,19 @@ namespace Rabbit.Tests.World.Parser
             Assert.Equal(2, world.Caddies.Count);
 
             var firstPlayer = world.Players[0];
-            IsPlayer(firstPlayer, 12, 15, 2, PlayerState.Playing);
+            APlayer.Is(firstPlayer, 12, 15, 2, PlayerState.Playing);
 
             var secondPlayer = world.Players[1];
-            IsPlayer(secondPlayer, 21, 51, -3, PlayerState.Stunned);
+            APlayer.Is(secondPlayer, 21, 51, -3, PlayerState.Stunned);
 
-            IsCompteur(world.Compteurs[0], 5, 1);
+            IsCompteur(world.Compteurs[0], 12, 15);
             IsCompteur(world.Compteurs[1], 42, 64);
 
             IsCaddy(world.Caddies[0], 5023, -8963);
             IsCaddy(world.Caddies[1], 12, 15);
 
+            Assert.True(firstPlayer.HasCompteur);
+            Assert.False(secondPlayer.HasCompteur);
         }
 
         private void IsCaddy(Caddy caddy, int x, int y)
@@ -51,13 +53,7 @@ namespace Rabbit.Tests.World.Parser
             Assert.Equal(y, compteur.Pos.Y);
         }
 
-        private static void IsPlayer(Player player, int x, int y, int score, PlayerState state)
-        {
-            Assert.Equal(x, player.Pos.X);
-            Assert.Equal(y, player.Pos.Y);
-            Assert.Equal(score, player.Score);
-            Assert.Equal(state, player.State);
-        }
+
 
     }
 }
