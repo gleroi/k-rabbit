@@ -48,6 +48,11 @@ namespace Rabbit.World
                     throw new InvalidOperationException("unknown direction");
             }
         }
+
+        internal int Dist(Point p)
+        {
+            return Math.Abs(p.X - this.X) + Math.Abs(p.Y - this.Y);
+        }
     }
 
     struct Player
