@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Rabbit
 {
-    enum Direction
+    public enum Direction
     {
         N,
         S,

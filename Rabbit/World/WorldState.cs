@@ -104,7 +104,7 @@ namespace Rabbit.World
         Caddy = 8,
     }
 
-    class WorldState : ICloneable
+    class WorldState
     {
         public int Round { get; private set; }
         public List<Player> Players { get; private set; }
@@ -141,20 +141,27 @@ namespace Rabbit.World
 
         public WorldState ApplyAction(int iplayer, Direction direction)
         {
-            var world = this.Clone() as WorldState;
-
             Point npos = GetNewPos(iplayer, direction);
 
-            if (world.IsValidMove(iplayer, npos))
+            var nplayers = new List<Player>(this.Players);
+            var ncompteurs = new List<Compteur>(this.Compteurs);
+
+            var player = this.Players[iplayer];
+
+            if (this.IsValidMove(iplayer, npos))
             {
-                world.ApplyMove(iplayer, npos);
+                nplayers[iplayer] = new Player(npos.X, npos.Y, player.Score, PlayerState.Playing);
+                if (player.HasCompteur)
+                {
+                    var icpt = ncompteurs.FindIndex(cp => cp.Pos == player.Pos);
+                    ncompteurs[icpt] = new Compteur(npos.X, npos.Y);
+                }
             }
             else
             {
-                var player = world.Players[iplayer];
-                world.Players[iplayer] = new Player(player.Pos.X, player.Pos.Y, player.Score, PlayerState.Stunned);
+                nplayers[iplayer] = new Player(player.Pos.X, player.Pos.Y, player.Score, PlayerState.Stunned);
             }
-            return world;
+            return new WorldState(this.Round, nplayers, ncompteurs, this.Caddies);
         }
 
         private Point GetNewPos(int player, Direction direction)
@@ -171,20 +178,5 @@ namespace Rabbit.World
             }
             return this.Players.All(p => p.Pos != npos);
         }
-
-        private void ApplyMove(int player, Point npos)
-        {
-            var p = this.Players[player];
-            this.Players[player] = new Player(npos.X, npos.Y, p.Score, PlayerState.Playing);
-        }
-
-        #region ICloneable Members
-
-        public object Clone()
-        {
-            return new WorldState(this.Round, this.Players.ToList(), this.Compteurs.ToList(), this.Caddies.ToList());
-        }
-
-        #endregion
     }
 }
