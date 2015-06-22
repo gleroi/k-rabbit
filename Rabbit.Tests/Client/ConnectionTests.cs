@@ -34,9 +34,9 @@ namespace Rabbit.Tests.Client
         [Fact]
         public void Send_ShouldSucceed()
         {
-            const string sendedMsg = "first message";
             this.conn.Send("first message");
 
+            const string sendedMsg = "first message\n";
             byte[] sendedData = Encoding.ASCII.GetBytes(sendedMsg);
             this.ThenSocketSended(sendedData);
         }

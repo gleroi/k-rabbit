@@ -15,9 +15,9 @@ namespace Rabbit.Tests.AI
         public void TwoPlayer_TreeGeneration()
         {
             var worldstate =
-                "worldstate::0;joueur1,0,0,0,playing:joueur2,15,11,0,playing;" +
+                "worldstate::0;1,0,0,0,playing:2,15,11,0,playing;" +
                 "4,4:6,6;" +
-                "joueur1,0,0:joueur2,15,11;";
+                "1,0,0:2,15,11;";
             var parser = new WorldParser(worldstate);
             var world = parser.Parse();
 
