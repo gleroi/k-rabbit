@@ -100,7 +100,6 @@ namespace Rabbit.World
 
             while (Current != ';')
             {
-                ReadString("joueur");
                 int id = ReadInt();
                 Read(',');
                 int x = ReadInt();
@@ -154,7 +153,6 @@ namespace Rabbit.World
             var caddies = new List<Caddy>(8);
             while (Current != ';')
             {
-                ReadString("joueur");
                 int i = ReadInt();
                 Read(',');
                 int x = ReadInt();

@@ -43,11 +43,11 @@ namespace Rabbit.Client
             {
                 msg = new Message(MessageType.GameOver, data);
             }
-            else if (data.StartsWith("Inscription OK"))
+            else if (data.StartsWith("inscription OK", StringComparison.InvariantCultureIgnoreCase))
             {
                 msg = new Message(MessageType.InscriptionOk, data);
             }
-            else if (data.StartsWith("Inscription KO"))
+            else if (data.StartsWith("inscription KO", StringComparison.InvariantCultureIgnoreCase))
             {
                 msg = new Message(MessageType.InscriptionKo, data);
             }
@@ -72,12 +72,8 @@ namespace Rabbit.Client
 
             try
             {
-                do
-                {
-                    recvLen = this.server.Receive(recvData);
-                    data += Encoding.ASCII.GetString(recvData, 0, recvLen);
-                }
-                while (recvLen > 0);
+                recvLen = this.server.Receive(recvData);
+                data = Encoding.ASCII.GetString(recvData, 0, recvLen);
             }
             catch (Exception ex)
             {
@@ -92,14 +88,14 @@ namespace Rabbit.Client
 
         public void Send(string msg)
         {
-            var data = Encoding.ASCII.GetBytes(msg);
+            var data = Encoding.ASCII.GetBytes(msg + "\n");
             try
             {
                 Log.Write("Sending " + data.Length + " bytes");
 
                 int sent = this.server.Send(data);
 
-                Log.Write("Sended " + data.Length + " bytes");
+                Log.Write("Sended " + sent + " bytes");
             }
             catch (Exception ex)
             {

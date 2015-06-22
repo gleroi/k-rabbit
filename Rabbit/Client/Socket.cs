@@ -22,14 +22,12 @@ namespace Rabbit.Client
         {
             Log.Write("Creating socket");
 
-            var hostEntry = Dns.GetHostEntry(host);
-            var ip = hostEntry.AddressList.First(addr => addr.AddressFamily == AddressFamily.InterNetwork);
             this.server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Log.Write("IP is: {0}", ip);
+            Log.Write("IP is: {0}", host);
 
             try
             {
-                this.server.Connect(ip, port);
+                this.server.Connect(host, port);
                 if (!this.server.Connected)
                 {
                     throw new InvalidOperationException("Could not connect to server");
@@ -50,8 +48,8 @@ namespace Rabbit.Client
 
         public int Receive(byte[] data)
         {
-            return this.server.Receive(data, SocketFlags.None);
+            return this.server.Receive(data);
         }
-
     }
+
 }

@@ -7,12 +7,6 @@ using System.Net;
 
 namespace Rabbit.Client
 {
-    // teamId: 170
-    // secret: mUrUs2
-
-    // host: battle.gate.vm.gate.erdf.fr
-    // port: 2026
-
     class Client
     {
         string Secret { get; set; }
@@ -70,6 +64,16 @@ namespace Rabbit.Client
                     Log.Write("Connection: receveived: " + msg.Data);
                     return;
             }
+        }
+
+        public Message WaitMessage()
+        {
+            Log.Write("Waiting for message");
+
+            var msg = this.Server.Receive();
+
+            Log.Write("Message received :" + msg.Data);
+            return msg;
         }
 
         public void SendMove(int round, Direction direction)
