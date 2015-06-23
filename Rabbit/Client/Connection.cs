@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
 
 namespace Rabbit.Client
 {
-
-    class Connection
+    internal class Connection
     {
-        public string Host { get; private set; }
-        public int Port { get; private set; }
+        public string Host { get; }
+        public int Port { get; }
         private readonly ISocket server;
 
         public Connection(string host, int port, ISocket socket)
@@ -54,13 +50,18 @@ namespace Rabbit.Client
                 {
                     msg = new Message(MessageType.InscriptionKo, data);
                 }
+                else if (data.StartsWith("action OK", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    msg = new Message(MessageType.ActionOk, data);
+                }
+
                 else
                 {
                     Log.Write("Unknown message: " + data);
                     continue;
                 }
 
-                Log.Write("Message Recu: " + msg.Type.ToString());
+                Log.Write("Message Recu: " + msg.Type);
 
                 yield return msg;
             }

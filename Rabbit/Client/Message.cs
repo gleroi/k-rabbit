@@ -11,6 +11,8 @@ namespace Rabbit.Client
         InscriptionKo,
         WorkState,
         GameOver,
+        ActionOk,
+        ActionKo
     }
 
     struct Message

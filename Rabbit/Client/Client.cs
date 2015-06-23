@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using System.Net;
 
 namespace Rabbit.Client
 {
-    class Client
+    internal class Client
     {
-        string Secret { get; set; }
-        int GameId { get; set; }
-        int TeamId { get; set; }
+        private string Secret { get; }
+        private int GameId { get; }
+        private int TeamId { get; }
 
-        Connection Server { get; set; }
+        private Connection Server { get; }
 
         public Client(Connection conn, string secret, int gameId, int teamId)
         {
@@ -108,7 +104,5 @@ namespace Rabbit.Client
             }
             return this.Secret + "%%action::" + this.TeamId + ";" + this.GameId + ";" + round + ";" + dirStr;
         }
-
     }
-
 }

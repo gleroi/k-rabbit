@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 
 namespace Rabbit
 {
@@ -27,6 +30,8 @@ namespace Rabbit
             {
                 Console.WriteLine("usage: rabbit.exe <host> <port>");
             }
+
+            ConfigLog();
 
             var manager = new GameManager();
 
@@ -65,6 +70,24 @@ namespace Rabbit
                 manager.StopGame(GameId, TeamId, Secret);
                 throw;
             }
+        }
+
+        private static void ConfigLog()
+        {
+            var config = new LoggingConfiguration();
+
+            var console = new ColoredConsoleTarget();
+            config.AddTarget("console", console);
+            var cRule = new LoggingRule("*", LogLevel.Debug, console);
+            config.LoggingRules.Add(cRule);
+
+            var file = new FileTarget();
+            file.FileName = "${basedir}/${shortdate}_rabbit.log";
+            config.AddTarget("file", file);
+            var fRule = new LoggingRule("*", LogLevel.Debug, file);
+            config.LoggingRules.Add(fRule);
+
+            LogManager.Configuration = config;
         }
 
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
