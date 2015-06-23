@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Moq;
 using Rabbit.Client;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Rabbit.Tests.Client
 {
@@ -42,7 +43,7 @@ namespace Rabbit.Tests.Client
         }
 
         [Fact]
-        public void ReceivedEnmpty_ShouldThrowMessageInconnu()
+        public void ReceivedInscriptionok_ShouldSucced()
         {
             this.GivenSocketReceive("Inscription OK");
 
@@ -52,6 +53,14 @@ namespace Rabbit.Tests.Client
             Assert.Equal("Inscription OK", msg.Data);
         }
 
+        [Fact]
+        void ReceiveAlot_ShouldDoNothing()
+        {
+            this.GivenSocketReceive(AMessage.BigData);
 
+            var msgs = this.conn.Receive().ToList();
+
+            Assert.NotNull(msgs);
+        }
     }
 }

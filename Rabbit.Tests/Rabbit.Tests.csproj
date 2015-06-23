@@ -59,6 +59,7 @@
     <Compile Include="AI\TreeTests.cs" />
     <Compile Include="APlayer.cs" />
     <Compile Include="AWorld.cs" />
+    <Compile Include="Client\AMessage.cs" />
     <Compile Include="Client\ConnectionTests.cs" />
     <Compile Include="Client\GameManagerTests.cs" />
     <Compile Include="Client\SocketFake.cs" />

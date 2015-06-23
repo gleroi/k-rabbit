@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Rabbit.Client
@@ -88,11 +89,19 @@ namespace Rabbit.Client
                     throw;
                 }
 
-                var data = Encoding.ASCII.GetString(recvData, 0, recvLen);
-                var lines = data.Split('\n');
-                foreach (var line in lines)
+                int start = 0;
+                for (int i = 0; i < recvLen; i++)
                 {
-                    yield return line;
+                    var c = recvData[i];
+                    if (c == '\n')
+                    {
+                        if (i > start)
+                        {
+                            var line = Encoding.ASCII.GetString(recvData, start, i - start);
+                            yield return line;
+                        }
+                        start = i + 1;
+                    }
                 }
             }
         }

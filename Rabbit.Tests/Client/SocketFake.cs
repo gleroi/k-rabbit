@@ -29,9 +29,9 @@ namespace Rabbit.Tests.Client
         {
             if (this.currentReceivedData < this.ReceiveData.Count)
             {
-                byte[] recvData = Encoding.ASCII.GetBytes(this.ReceiveData[this.currentReceivedData]);
+                byte[] recvData = Encoding.ASCII.GetBytes(this.ReceiveData[this.currentReceivedData] + "\n");
                 this.currentReceivedData += 1;
-                
+
                 recvData.CopyTo(data, 0);
                 return recvData.Length;
             }

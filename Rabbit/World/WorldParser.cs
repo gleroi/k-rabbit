@@ -15,7 +15,10 @@ namespace Rabbit.World
             this.Data = data;
         }
 
-        internal char Current { get { return this.Data[this.Index]; } }
+        internal char Current
+        {
+            get { return this.Data[this.Index]; }
+        }
 
         void Inc()
         {
