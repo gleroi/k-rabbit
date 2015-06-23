@@ -28,62 +28,72 @@ namespace Rabbit.Client
             this.server.Connect(this.Host, this.Port);
         }
 
-        public Message Receive()
+        public IEnumerable<Message> Receive()
         {
             Log.Write("Reading message from server");
 
-            var data = ReadData();
-            Message msg;
+            var lines = ReadData();
 
-            if (data.StartsWith("worldstate::"))
+            foreach (var data in lines)
             {
-                msg = new Message(MessageType.WorkState, data);
-            }
-            else if (data.StartsWith("game over"))
-            {
-                msg = new Message(MessageType.GameOver, data);
-            }
-            else if (data.StartsWith("inscription OK", StringComparison.InvariantCultureIgnoreCase))
-            {
-                msg = new Message(MessageType.InscriptionOk, data);
-            }
-            else if (data.StartsWith("inscription KO", StringComparison.InvariantCultureIgnoreCase))
-            {
-                msg = new Message(MessageType.InscriptionKo, data);
-            }
-            else
-            {
-                Log.Write("Unknown message: " + data);
-                throw new InvalidOperationException("message inconnu: " + data);
-            }
+                Message msg;
 
-            Log.Write("Message Recu: " + msg.Type.ToString());
-            return msg;
+                if (data.StartsWith("worldstate::"))
+                {
+                    msg = new Message(MessageType.WorkState, data);
+                }
+                else if (data.StartsWith("game over"))
+                {
+                    msg = new Message(MessageType.GameOver, data);
+                }
+                else if (data.StartsWith("inscription OK", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    msg = new Message(MessageType.InscriptionOk, data);
+                }
+                else if (data.StartsWith("inscription KO", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    msg = new Message(MessageType.InscriptionKo, data);
+                }
+                else
+                {
+                    Log.Write("Unknown message: " + data);
+                    continue;
+                }
+
+                Log.Write("Message Recu: " + msg.Type.ToString());
+
+                yield return msg;
+            }
         }
 
-        private string ReadData()
+        private IEnumerable<string> ReadData()
         {
             const int BUFFER_LEN = 1024;
             var recvData = new byte[BUFFER_LEN];
-            string data = string.Empty;
             int recvLen = 0;
 
             Log.Write("Reading data");
 
-            try
+            while (true)
             {
-                recvLen = this.server.Receive(recvData);
-                data = Encoding.ASCII.GetString(recvData, 0, recvLen);
-            }
-            catch (Exception ex)
-            {
-                Log.Write("Exception while receiving message");
-                Log.Write(ex.ToString());
-            }
+                try
+                {
+                    recvLen = this.server.Receive(recvData);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Exception while receiving message");
+                    Log.Write(ex.ToString());
+                    throw;
+                }
 
-            Log.Write(data.Length + " bytes read");
-
-            return data;
+                var data = Encoding.ASCII.GetString(recvData, 0, recvLen);
+                var lines = data.Split('\n');
+                foreach (var line in lines)
+                {
+                    yield return line;
+                }
+            }
         }
 
         public void Send(string msg)

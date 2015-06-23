@@ -46,7 +46,7 @@ namespace Rabbit.Tests.Client
         {
             this.GivenSocketReceive("Inscription OK");
 
-            var msg = this.conn.Receive();
+            var msg = this.conn.Receive().First();
 
             Assert.Equal(MessageType.InscriptionOk, msg.Type);
             Assert.Equal("Inscription OK", msg.Data);

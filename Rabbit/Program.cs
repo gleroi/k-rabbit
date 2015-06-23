@@ -19,6 +19,8 @@ namespace Rabbit
 
         public static string Host = "battle.gate.vm.gate.erdf.fr";
 
+        public static int GameId = -1;
+
         static void Main(string[] args)
         {
             if (args.Length != 2 && args.Length != 0)
@@ -28,11 +30,11 @@ namespace Rabbit
 
             var manager = new GameManager();
 
-            var gameId = manager.Create(TeamId, Secret);
+            GameId = manager.Create(TeamId, Secret);
 
-            Log.Write("Game ID is : " + gameId);
+            Log.Write("Game ID is : " + GameId);
 
-            if (gameId == -1)
+            if (GameId == -1)
             {
                 return;
             }
@@ -44,23 +46,31 @@ namespace Rabbit
                 Task task = new Task(
                     () =>
                         {
-                            var rabbit = new KRabbit(subId, new BasicAi(subId), gameId);
+                            var rabbit = new KRabbit(subId, new BasicAi(subId), GameId);
                             rabbit.Run();
                         });
                 task.Start();
                 rabbits[i] = task;
             }
 
+            Console.CancelKeyPress += Console_CancelKeyPress;
+
             try
             {
-                manager.StartGame(gameId, TeamId, Secret);
+                manager.StartGame(GameId, TeamId, Secret);
                 Task.WaitAll(rabbits);
             }
             catch (Exception)
             {
-                manager.StopGame(gameId, TeamId, Secret);
+                manager.StopGame(GameId, TeamId, Secret);
                 throw;
             }
+        }
+
+        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        {
+            var manager = new GameManager();
+            manager.StopGame(GameId, TeamId, Secret);
         }
     }
 }

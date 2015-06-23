@@ -53,7 +53,7 @@ namespace Rabbit.Client
         {
             Log.Write("Waiting for inscripton acknowledgement");
 
-            var msg = this.Server.Receive();
+            var msg = this.Server.Receive().First();
 
             switch (msg.Type)
             {
@@ -66,14 +66,15 @@ namespace Rabbit.Client
             }
         }
 
-        public Message WaitMessage()
+        public IEnumerable<Message> WaitMessages()
         {
             Log.Write("Waiting for message");
 
-            var msg = this.Server.Receive();
-
-            Log.Write("Message received :" + msg.Data);
-            return msg;
+            foreach (var msg in this.Server.Receive())
+            {
+                Log.Write("Message received :" + msg.Data);
+                yield return msg;
+            }
         }
 
         public void SendMove(int round, Direction direction)
