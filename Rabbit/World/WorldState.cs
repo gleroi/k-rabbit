@@ -36,9 +36,9 @@ namespace Rabbit.World
             switch (direction)
             {
                 case Direction.N:
-                    return new Point(this.X, this.Y + 1);
-                case Direction.S:
                     return new Point(this.X, this.Y - 1);
+                case Direction.S:
+                    return new Point(this.X, this.Y + 1);
                 case Direction.E:
                     return new Point(this.X + 1, this.Y);
                 case Direction.O:
@@ -122,7 +122,7 @@ namespace Rabbit.World
         public List<Caddy> Caddies { get; private set; }
 
         public const int MAP_WIDTH = 16;
-        public const int MAP_HEIGHT = 12;
+        public const int MAP_HEIGHT = 13;
 
         private CellState[] Map = new CellState[MAP_WIDTH * MAP_HEIGHT];
 

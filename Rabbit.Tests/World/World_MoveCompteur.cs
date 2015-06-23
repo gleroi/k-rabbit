@@ -13,8 +13,8 @@ namespace Rabbit.Tests.World
         [Theory,
         InlineData(8, 9, Direction.E),
         InlineData(10, 9, Direction.O),
-        InlineData(9, 8, Direction.N),
-        InlineData(9, 10, Direction.S)]
+        InlineData(9, 10, Direction.N),
+        InlineData(9, 8, Direction.S)]
         public void MoveOnCompteur_ShouldHasCompteur(int x, int y, Direction direction)
         {
             var world = AWorld.WithOnePlayerAt(x, y);
@@ -29,8 +29,8 @@ namespace Rabbit.Tests.World
         [Theory,
         InlineData(10, 9, Direction.E),
         InlineData(8, 9, Direction.O),
-        InlineData(9, 10, Direction.N),
-        InlineData(9, 8, Direction.S)]
+        InlineData(9, 8, Direction.N),
+        InlineData(9, 10, Direction.S)]
         public void MoveWithCompteur_ShouldHasCompteur(int x, int y, Direction direction)
         {
             var world = AWorld.WithOnePlayerAt(9, 9);
