@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Rabbit.Client
 {
-    class Connection
+    internal class Connection
     {
-        public string Host { get; private set; }
-        public int Port { get; private set; }
+        public string Host { get; }
+        public int Port { get; }
         private readonly ISocket server;
 
         public Connection(string host, int port, ISocket socket)
@@ -23,62 +25,85 @@ namespace Rabbit.Client
             this.server.Connect(this.Host, this.Port);
         }
 
-        public Message Receive()
+        public IEnumerable<Message> Receive()
         {
             Log.Write("Reading message from server");
 
-            var data = ReadData();
-            Message msg;
+            var lines = ReadData();
 
-            if (data.StartsWith("worldstate::"))
+            foreach (var data in lines)
             {
-                msg = new Message(MessageType.WorkState, data);
-            }
-            else if (data.StartsWith("game over"))
-            {
-                msg = new Message(MessageType.GameOver, data);
-            }
-            else if (data.StartsWith("inscription OK", StringComparison.InvariantCultureIgnoreCase))
-            {
-                msg = new Message(MessageType.InscriptionOk, data);
-            }
-            else if (data.StartsWith("inscription KO", StringComparison.InvariantCultureIgnoreCase))
-            {
-                msg = new Message(MessageType.InscriptionKo, data);
-            }
-            else
-            {
-                Log.Write("Unknown message: " + data);
-                throw new InvalidOperationException("message inconnu: " + data);
-            }
+                Message msg;
 
-            Log.Write("Message Recu: " + msg.Type.ToString());
-            return msg;
+                if (data.StartsWith("worldstate::"))
+                {
+                    msg = new Message(MessageType.WorkState, data);
+                }
+                else if (data.StartsWith("game over"))
+                {
+                    msg = new Message(MessageType.GameOver, data);
+                }
+                else if (data.StartsWith("inscription OK", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    msg = new Message(MessageType.InscriptionOk, data);
+                }
+                else if (data.StartsWith("inscription KO", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    msg = new Message(MessageType.InscriptionKo, data);
+                }
+                else if (data.StartsWith("action OK", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    msg = new Message(MessageType.ActionOk, data);
+                }
+
+                else
+                {
+                    Log.Write("Unknown message: " + data);
+                    continue;
+                }
+
+                Log.Write("Message Recu: " + msg.Type);
+
+                yield return msg;
+            }
         }
 
-        private string ReadData()
+        private IEnumerable<string> ReadData()
         {
             const int BUFFER_LEN = 1024;
             var recvData = new byte[BUFFER_LEN];
-            string data = string.Empty;
             int recvLen = 0;
 
             Log.Write("Reading data");
 
-            try
+            while (true)
             {
-                recvLen = this.server.Receive(recvData);
-                data = Encoding.ASCII.GetString(recvData, 0, recvLen);
-            }
-            catch (Exception ex)
-            {
-                Log.Write("Exception while receiving message");
-                Log.Write(ex.ToString());
-            }
+                try
+                {
+                    recvLen = this.server.Receive(recvData);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("Exception while receiving message");
+                    Log.Write(ex.ToString());
+                    throw;
+                }
 
-            Log.Write(data.Length + " bytes read");
-
-            return data;
+                int start = 0;
+                for (int i = 0; i < recvLen; i++)
+                {
+                    var c = recvData[i];
+                    if (c == '\n')
+                    {
+                        if (i > start)
+                        {
+                            var line = Encoding.ASCII.GetString(recvData, start, i - start);
+                            yield return line;
+                        }
+                        start = i + 1;
+                    }
+                }
+            }
         }
 
         public void Send(string msg)

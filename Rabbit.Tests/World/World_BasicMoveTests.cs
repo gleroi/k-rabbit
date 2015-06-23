@@ -17,7 +17,7 @@ namespace Rabbit.Tests.World
             Assert.Equal(1, newWorld.Players.Count);
 
             var player = newWorld.Players[0];
-            APlayer.Is(player, 5, 8, 0, PlayerState.Playing);
+            APlayer.Is(player, 5, 6, 0, PlayerState.Playing);
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace Rabbit.Tests.World
             Assert.Equal(1, newWorld.Players.Count);
 
             var player = newWorld.Players[0];
-            APlayer.Is(player, 5, 6, 0, PlayerState.Playing);
+            APlayer.Is(player, 5, 8, 0, PlayerState.Playing);
         }
 
         [Fact]
@@ -63,11 +63,11 @@ namespace Rabbit.Tests.World
         }
 
         [Fact]
-        public void OnOrigin_MovingSouth_ShouldStunned()
+        public void OnOrigin_MovingNorth_ShouldStunned()
         {
             var world = AWorld.WithOnePlayerAt(0, 0);
 
-            var newWorld = world.ApplyAction(0, Direction.S);
+            var newWorld = world.ApplyAction(0, Direction.N);
             APlayer.Is(newWorld.Players[0], 0, 0, 0, PlayerState.Stunned);
         }
 
@@ -81,11 +81,11 @@ namespace Rabbit.Tests.World
         }
 
         [Fact]
-        public void OnExtreme_MovingNorth_ShouldStunned()
+        public void OnExtreme_MovingSouth_ShouldStunned()
         {
             var world = AWorld.WithOnePlayerAt(WorldState.MAP_WIDTH - 1, WorldState.MAP_HEIGHT - 1);
 
-            var newWorld = world.ApplyAction(0, Direction.N);
+            var newWorld = world.ApplyAction(0, Direction.S);
             APlayer.Is(newWorld.Players[0], WorldState.MAP_WIDTH - 1, WorldState.MAP_HEIGHT - 1, 0, PlayerState.Stunned);
         }
 

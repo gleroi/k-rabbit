@@ -1,12 +1,15 @@
-﻿namespace Rabbit.Client
-{
-    class Client
-    {
-        string Secret { get; set; }
-        int GameId { get; set; }
-        int TeamId { get; set; }
+﻿using System.Collections.Generic;
+using System.Linq;
 
-        Connection Server { get; set; }
+namespace Rabbit.Client
+{
+    internal class Client
+    {
+        private string Secret { get; }
+        private int GameId { get; }
+        private int TeamId { get; }
+
+        private Connection Server { get; }
 
         public Client(Connection conn, string secret, int gameId, int teamId)
         {
@@ -46,7 +49,7 @@
         {
             Log.Write("Waiting for inscripton acknowledgement");
 
-            var msg = this.Server.Receive();
+            var msg = this.Server.Receive().First();
 
             switch (msg.Type)
             {
@@ -59,14 +62,15 @@
             }
         }
 
-        public Message WaitMessage()
+        public IEnumerable<Message> WaitMessages()
         {
             Log.Write("Waiting for message");
 
-            var msg = this.Server.Receive();
-
-            Log.Write("Message received :" + msg.Data);
-            return msg;
+            foreach (var msg in this.Server.Receive())
+            {
+                Log.Write("Message received :" + msg.Data);
+                yield return msg;
+            }
         }
 
         public void SendMove(int round, Direction direction)
@@ -100,7 +104,5 @@
             }
             return this.Secret + "%%action::" + this.TeamId + ";" + this.GameId + ";" + round + ";" + dirStr;
         }
-
     }
-
 }

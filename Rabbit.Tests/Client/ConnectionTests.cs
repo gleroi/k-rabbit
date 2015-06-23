@@ -2,6 +2,7 @@
 
 using Rabbit.Client;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Rabbit.Tests.Client
 {
@@ -38,16 +39,15 @@ namespace Rabbit.Tests.Client
         }
 
         [Fact]
-        public void ReceivedEnmpty_ShouldThrowMessageInconnu()
+        public void ReceivedInscriptionok_ShouldSucced()
         {
             this.GivenSocketReceive("Inscription OK");
 
-            var msg = this.conn.Receive();
+            var msg = this.conn.Receive().First();
 
             Assert.Equal(MessageType.InscriptionOk, msg.Type);
             Assert.Equal("Inscription OK", msg.Data);
         }
-
 
     }
 }

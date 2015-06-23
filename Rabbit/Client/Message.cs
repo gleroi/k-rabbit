@@ -1,4 +1,9 @@
-﻿namespace Rabbit.Client
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Rabbit.Client
 {
     enum MessageType
     {
@@ -6,6 +11,8 @@
         InscriptionKo,
         WorkState,
         GameOver,
+        ActionOk,
+        ActionKo
     }
 
     struct Message

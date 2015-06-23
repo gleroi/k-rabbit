@@ -1,4 +1,10 @@
-﻿namespace Rabbit.Client
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Rabbit.Client
 {
     using Rabbit.AI;
     using Rabbit.World;
@@ -21,16 +27,14 @@
             this.Client.Connect();
 
             bool gameover = false;
-            while (!gameover)
+            foreach (var msg in this.Client.WaitMessages())
             {
-                var msg = this.Client.WaitMessage();
-
                 switch (msg.Type)
                 {
                     case MessageType.GameOver:
                     case MessageType.InscriptionKo:
                         gameover = true;
-                        break;
+                        return;
                     case MessageType.InscriptionOk:
                         break;
                     case MessageType.WorkState:
