@@ -1,5 +1,4 @@
 ﻿using Rabbit.Client;
-using Xunit;
 
 namespace Rabbit.Tests.Client
 {

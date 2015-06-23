@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Rabbit.World;
+﻿using Rabbit.World;
 
 namespace Rabbit.AI
 {
@@ -13,7 +9,7 @@ namespace Rabbit.AI
     {
         protected WorldState[] GenerateForPlayer(WorldState world, int playerId)
         {
-            WorldState[] states = new WorldState[4];
+            var states = new WorldState[4];
 
             states[0] = world.ApplyAction(playerId, Direction.N);
             states[1] = world.ApplyAction(playerId, Direction.S);

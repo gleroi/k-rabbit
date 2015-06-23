@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Rabbit.World;
+﻿using Rabbit.World;
 
 namespace Rabbit.AI
 {
@@ -34,9 +30,8 @@ namespace Rabbit.AI
                     imax = i;
                 }
             }
+
             return (Direction)imax;
         }
-
-
     }
 }

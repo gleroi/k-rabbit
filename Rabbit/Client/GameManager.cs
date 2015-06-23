@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 
 namespace Rabbit.Client
 {
-    using System.Security.Policy;
-
     class GameManager
     {
         readonly HttpClient http;
