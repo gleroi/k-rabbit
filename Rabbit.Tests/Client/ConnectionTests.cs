@@ -53,14 +53,5 @@ namespace Rabbit.Tests.Client
             Assert.Equal("Inscription OK", msg.Data);
         }
 
-        [Fact]
-        void ReceiveAlot_ShouldDoNothing()
-        {
-            this.GivenSocketReceive(AMessage.BigData);
-
-            var msgs = this.conn.Receive().ToList();
-
-            Assert.NotNull(msgs);
-        }
     }
 }
