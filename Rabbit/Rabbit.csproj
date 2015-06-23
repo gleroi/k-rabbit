@@ -74,7 +74,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Ai.cs" />
+    <Compile Include="AI\BaffeAi.cs" />
     <Compile Include="AI\BasicAi.cs" />
+    <Compile Include="AI\GoCompteurAi.cs" />
+    <Compile Include="AI\GoHome.cs" />
     <Compile Include="AI\Tree.cs" />
     <Compile Include="Client\Client.cs" />
     <Compile Include="Client\Connection.cs" />

@@ -11,16 +11,13 @@ namespace Rabbit.AI
     /// </summary>
     class BasicAi : Ai
     {
-        private readonly int Id;
-
-        public BasicAi(int id)
-        {
-            this.Id = id;
-        }
+        public BasicAi(int id) 
+            :base(id)
+        { }
 
         private int[] dirs = new int[4] {2, 0, 1, 3};
 
-        public Direction Decide(WorldState world)
+        public override Direction Decide(WorldState world)
         {
             var nextStates = GenerateForPlayer(world, this.Id);
 

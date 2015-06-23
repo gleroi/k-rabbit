@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using NLog;
@@ -43,15 +44,15 @@ namespace Rabbit
             {
                 return;
             }
-
-            var rabbits = new Task[6];
-            for (int i = 0; i < 6; i++)
+            const int MAX_RABBITS = 6;
+            var rabbits = new Task[MAX_RABBITS];
+            for (int i = 0; i < MAX_RABBITS; i++)
             {
                 var subId = i;
                 Task task = new Task(
                     () =>
                         {
-                            var rabbit = new KRabbit(subId, new BasicAi(subId), GameId);
+                            var rabbit = new KRabbit(subId, new GoCompteurAi(subId), GameId);
                             rabbit.Run();
                         });
                 task.Start();
@@ -62,6 +63,8 @@ namespace Rabbit
 
             try
             {
+                Process.Start(GameManager.BASE + "?gameId=" + GameId);
+
                 manager.StartGame(GameId, TeamId, Secret);
                 Task.WaitAll(rabbits);
             }

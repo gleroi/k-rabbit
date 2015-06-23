@@ -9,8 +9,18 @@ namespace Rabbit.AI
     /// <summary>
     /// Basic 
     /// </summary>
-    class Ai
+    abstract class Ai
     {
+        protected readonly int Id;
+
+        protected Ai(int id)
+        {
+            this.Id = id;
+            this.NextAi = () => this;
+        }
+
+        public Func<Ai> NextAi { get; protected set; } 
+
         protected WorldState[] GenerateForPlayer(WorldState world, int playerId)
         {
             WorldState[] states = new WorldState[4];
@@ -22,5 +32,36 @@ namespace Rabbit.AI
             return states;
         }
 
+        protected Direction MoveTo(WorldState world, Point cpos)
+        {
+            var me = world.Players[this.Id].Pos;
+
+            var dir = cpos.X - me.X;
+            if (dir == 0)
+            {
+                dir = cpos.Y - me.Y;
+                if (dir > 0)
+                {
+                    return Direction.S;
+                }
+                else
+                {
+                    return Direction.N;
+                }
+            }
+            else
+            {
+                if (dir > 0)
+                {
+                    return Direction.E;
+                }
+                else
+                {
+                    return Direction.O;
+                }
+            }
+        }
+
+        public abstract Direction Decide(WorldState world);
     }
 }

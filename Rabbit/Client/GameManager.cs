@@ -17,7 +17,7 @@ namespace Rabbit.Client
             this.http = new HttpClient();
         }
 
-        const string BASE = "http://battle.gate.vm.gate.erdf.fr:8080/";
+        public const string BASE = "http://battle.gate.vm.gate.erdf.fr:8080/";
 
         private const string ENV = "test/";
 
