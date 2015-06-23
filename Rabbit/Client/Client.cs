@@ -5,11 +5,11 @@ namespace Rabbit.Client
 {
     internal class Client
     {
-        private string Secret { get; }
-        private int GameId { get; }
-        private int TeamId { get; }
+        private readonly string Secret;
+        private readonly int GameId;
+        private readonly int TeamId; 
 
-        private Connection Server { get; }
+        private readonly Connection Server;
 
         public Client(Connection conn, string secret, int gameId, int teamId)
         {

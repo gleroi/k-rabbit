@@ -7,8 +7,8 @@ namespace Rabbit.Client
 {
     internal class Connection
     {
-        public string Host { get; }
-        public int Port { get; }
+        public readonly string Host;
+        public readonly int Port;
         private readonly ISocket server;
 
         public Connection(string host, int port, ISocket socket)
