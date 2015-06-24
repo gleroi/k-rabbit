@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Rabbit.World;
 
 namespace Rabbit.AI
 {
     /// <summary>
-    /// Basic 
+    ///     Basic
     /// </summary>
-    abstract class Ai
+    internal abstract class Ai
     {
         protected readonly int Id;
 
@@ -19,7 +16,7 @@ namespace Rabbit.AI
             this.NextAi = () => this;
         }
 
-        public Func<Ai> NextAi { get; protected set; } 
+        public Func<Ai> NextAi { get; protected set; }
 
         protected WorldState[] GenerateForPlayer(WorldState world, int playerId)
         {
@@ -44,22 +41,13 @@ namespace Rabbit.AI
                 {
                     return Direction.S;
                 }
-                else
-                {
-                    return Direction.N;
-                }
+                return Direction.N;
             }
-            else
+            if (dir > 0)
             {
-                if (dir > 0)
-                {
-                    return Direction.E;
-                }
-                else
-                {
-                    return Direction.O;
-                }
+                return Direction.E;
             }
+            return Direction.O;
         }
 
         public abstract Direction Decide(WorldState world);

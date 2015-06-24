@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rabbit.World;
 
 namespace Rabbit.AI
 {
-    class GoCompteur : Ai
+    internal class GoCompteur : Ai
     {
-        public GoCompteur(int id) 
-            :base(id)
-        { }
-
+        public GoCompteur(int id)
+            : base(id) {}
 
         public override Direction Decide(WorldState world)
         {
