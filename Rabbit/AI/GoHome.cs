@@ -18,7 +18,7 @@ namespace Rabbit.AI
             var me = world.Players[this.Id];
             if (!world.Compteurs.Any(compteur => compteur.Pos == me.Pos))
             {
-                this.NextAi = () => new GoCompteurAi(this.Id);
+                this.NextAi = () => new GoCompteur(this.Id);
                 return this.NextAi().Decide(world);
             }
 
@@ -28,7 +28,7 @@ namespace Rabbit.AI
 
             if (nextPos == home)
             {
-                this.NextAi = () => new GoCompteurAi(this.Id);
+                this.NextAi = () => new GoCompteur(this.Id);
             }
             return direction;
         }

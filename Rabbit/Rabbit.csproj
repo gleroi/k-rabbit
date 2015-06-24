@@ -76,7 +76,7 @@
     <Compile Include="AI\Ai.cs" />
     <Compile Include="AI\BaffeAi.cs" />
     <Compile Include="AI\BasicAi.cs" />
-    <Compile Include="AI\GoCompteurAi.cs" />
+    <Compile Include="AI\GoCompteur.cs" />
     <Compile Include="AI\GoHome.cs" />
     <Compile Include="AI\Tree.cs" />
     <Compile Include="Client\Client.cs" />

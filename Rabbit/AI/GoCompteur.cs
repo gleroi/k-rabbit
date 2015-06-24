@@ -7,9 +7,9 @@ using Rabbit.World;
 
 namespace Rabbit.AI
 {
-    class GoCompteurAi : Ai
+    class GoCompteur : Ai
     {
-        public GoCompteurAi(int id) 
+        public GoCompteur(int id) 
             :base(id)
         { }
 
@@ -26,29 +26,25 @@ namespace Rabbit.AI
             return direction;
         }
 
-        private int FindClosestCompteur(WorldState world)
+        internal int FindClosestCompteur(WorldState world)
         {
-            Dictionary<int, List<Tuple<int, int>>> distances =
-                new Dictionary<int, List<Tuple<int, int>>>();
             var players = world.Players;
             var compteurs = world.Compteurs;
-            for (var p = 0; p < players.Count; p++)
+            List<Tuple<int, int>>[] distances = new List<Tuple<int, int>>[compteurs.Count];
+
+            for (var c = 0; c < compteurs.Count; c++)
             {
-                var player = players[p];
-                for (var c = 0; c < compteurs.Count; c++)
+                var cptDist = new List<Tuple<int, int>>(players.Count);
+                var compteur = compteurs[c];
+
+                for (var p = 0; p < players.Count; p++)
                 {
-                    var compteur = compteurs[c]; 
+                    var player = players[p];
                     var dist = compteur.Pos.Dist(player.Pos);
-                    List<Tuple<int, int>> cptList;
-                    if (distances.TryGetValue(c, out cptList))
-                    {
-                        cptList.Add(new Tuple<int, int>(dist, p));
-                    }
-                    else
-                    {
-                        distances.Add(c, new List<Tuple<int, int>> { new Tuple<int, int>(dist, p) });
-                    }
+                    cptDist.Add(new Tuple<int, int>(dist, p));
                 }
+                cptDist.Sort();
+                distances[c] = cptDist;
             }
 
             int myCpt = -1;
@@ -56,10 +52,9 @@ namespace Rabbit.AI
 
             for (int pos = 0; pos < players.Count; pos++)
             {
-                foreach (var cpt in distances.Keys)
+                for (var cpt = 0; cpt < distances.Length; cpt++)
                 {
                     var cptDist = distances[cpt];
-                    cptDist.Sort();
                     if (cptDist[pos].Item2 == this.Id && cptDist[pos].Item1 < minDist)
                     {
                         myCpt = cpt;
