@@ -114,9 +114,9 @@ namespace Rabbit.World
     internal enum CellState
     {
         Nothing = 0,
-        Player = 2,
-        Compteur = 4,
-        Caddy = 8
+        Impossible = 2,
+        RiskBaffe = 4,
+        Baffable = 8,
     }
 
     internal class WorldState
@@ -129,7 +129,6 @@ namespace Rabbit.World
         public const int MAP_WIDTH = 16;
         public const int MAP_HEIGHT = 13;
 
-        private CellState[] Map = new CellState[MAP_WIDTH*MAP_HEIGHT];
 
         private WorldState(int round, List<Player> players, List<Compteur> compteurs, List<Caddy> caddies)
         {

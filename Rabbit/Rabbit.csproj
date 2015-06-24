@@ -78,6 +78,7 @@
     <Compile Include="AI\BasicAi.cs" />
     <Compile Include="AI\GoCompteur.cs" />
     <Compile Include="AI\GoHome.cs" />
+    <Compile Include="AI\Strategist.cs" />
     <Compile Include="AI\Tree.cs" />
     <Compile Include="Client\Client.cs" />
     <Compile Include="Client\Connection.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client\Socket.cs" />
+    <Compile Include="World\Map.cs" />
     <Compile Include="World\UnexpectedTokenException.cs" />
     <Compile Include="World\WorldParser.cs" />
     <Compile Include="World\WorldState.cs" />
