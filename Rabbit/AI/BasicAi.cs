@@ -3,22 +3,18 @@
 namespace Rabbit.AI
 {
     /// <summary>
-    /// Choose the best next move, or first
+    ///     Choose the best next move, or first
     /// </summary>
-    class BasicAi : Ai
+    internal class BasicAi : Ai
     {
-        private readonly int Id;
-
         public BasicAi(int id)
-        {
-            this.Id = id;
-        }
+            : base(id) {}
 
-        private int[] dirs = new int[4] {2, 0, 1, 3};
+        private readonly int[] dirs = new int[4] {2, 0, 1, 3};
 
-        public Direction Decide(WorldState world)
+        public override Direction Decide(WorldState world)
         {
-            var nextStates = GenerateForPlayer(world, this.Id);
+            var nextStates = this.GenerateForPlayer(world, this.Id);
 
             int imax = -1;
             int scoreMax = int.MinValue;
@@ -32,8 +28,7 @@ namespace Rabbit.AI
                     imax = i;
                 }
             }
-
-            return (Direction)imax;
+            return (Direction) imax;
         }
     }
 }

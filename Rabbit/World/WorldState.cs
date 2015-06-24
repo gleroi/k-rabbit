@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Rabbit.World
 {
-    enum PlayerState
+    internal enum PlayerState
     {
         Playing,
-        Stunned,
+        Stunned
     }
 
-    struct Point
+    public struct Point
     {
         public readonly int X;
         public readonly int Y;
@@ -54,17 +54,22 @@ namespace Rabbit.World
         }
     }
 
-    struct Player
+    internal struct Player
     {
         public readonly Point Pos;
         public readonly int Score;
         public readonly PlayerState State;
 
         public Point Caddy { get; private set; }
-        public bool HasCompteur { get { return this.CompteurId != -1; } }
+
+        public bool HasCompteur
+        {
+            get { return this.CompteurId != -1; }
+        }
+
         public int CompteurId { get; private set; }
 
-        public Player(int x , int y, int score, PlayerState state)
+        public Player(int x, int y, int score, PlayerState state)
             : this()
         {
             this.Pos = new Point(x, y);
@@ -84,18 +89,18 @@ namespace Rabbit.World
         }
     }
 
-    struct Compteur
+    internal struct Compteur
     {
         public readonly Point Pos;
 
-        public Compteur(int x , int y)
+        public Compteur(int x, int y)
             : this()
         {
             this.Pos = new Point(x, y);
         }
     }
 
-    struct Caddy
+    internal struct Caddy
     {
         public readonly Point Pos;
 
@@ -106,25 +111,25 @@ namespace Rabbit.World
     }
 
     [Flags]
-    enum CellState
+    internal enum CellState
     {
         Nothing = 0,
         Player = 2,
         Compteur = 4,
-        Caddy = 8,
+        Caddy = 8
     }
 
-    class WorldState
+    internal class WorldState
     {
-        public int Round { get; private set; }
-        public List<Player> Players { get; private set; }
-        public List<Compteur> Compteurs { get; private set; }
-        public List<Caddy> Caddies { get; private set; }
+        public int Round { get; }
+        public List<Player> Players { get; }
+        public List<Compteur> Compteurs { get; }
+        public List<Caddy> Caddies { get; }
 
         public const int MAP_WIDTH = 16;
         public const int MAP_HEIGHT = 13;
 
-        private CellState[] Map = new CellState[MAP_WIDTH * MAP_HEIGHT];
+        private CellState[] Map = new CellState[MAP_WIDTH*MAP_HEIGHT];
 
         private WorldState(int round, List<Player> players, List<Compteur> compteurs, List<Caddy> caddies)
         {
@@ -132,6 +137,14 @@ namespace Rabbit.World
             this.Players = players;
             this.Compteurs = compteurs;
             this.Caddies = caddies;
+        }
+
+        public WorldState()
+        {
+            this.Round = 1;
+            this.Players = new List<Player>();
+            this.Compteurs = new List<Compteur>();
+            this.Caddies = new List<Caddy>();
         }
 
         public static WorldState Create(int round, List<Player> players, List<Compteur> compteurs, List<Caddy> caddies)
@@ -154,7 +167,7 @@ namespace Rabbit.World
             }
         }
 
-        void CheckCompteur(ref Player player)
+        private void CheckCompteur(ref Player player)
         {
             if (!player.HasCompteur)
             {
@@ -164,10 +177,9 @@ namespace Rabbit.World
             }
         }
 
-
         public WorldState ApplyAction(int iplayer, Direction direction)
         {
-            Point npos = GetNewPos(iplayer, direction);
+            Point npos = this.GetNewPos(iplayer, direction);
 
             var nplayers = new List<Player>(this.Players);
             var ncompteurs = new List<Compteur>(this.Compteurs);
@@ -184,7 +196,7 @@ namespace Rabbit.World
                 }
                 else
                 {
-                    CheckCompteur(ref nplayer);
+                    this.CheckCompteur(ref nplayer);
                 }
                 nplayers[iplayer] = nplayer;
             }

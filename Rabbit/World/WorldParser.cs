@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Rabbit.World
 {
-    class WorldParser
+    internal class WorldParser
     {
-        int Index = 0;
-        string Data;
+        private int Index;
+        private readonly string Data;
 
         public WorldParser(string data)
         {
@@ -18,7 +18,7 @@ namespace Rabbit.World
             get { return this.Data[this.Index]; }
         }
 
-        void Inc()
+        private void Inc()
         {
             this.Index += 1;
         }
@@ -33,7 +33,6 @@ namespace Rabbit.World
             this.Inc();
             return readed;
         }
-
 
         internal char ReadChar()
         {
@@ -52,7 +51,9 @@ namespace Rabbit.World
         {
             var digit = this.Current;
             if (!this.IsInt())
+            {
                 throw new UnexpectedTokenException("0..9", digit.ToString());
+            }
 
             this.Inc();
             return (digit - '0');
@@ -61,7 +62,7 @@ namespace Rabbit.World
         internal int ReadInt()
         {
             string data = String.Empty;
-            while (IsInt() || this.Current == '-')
+            while (this.IsInt() || this.Current == '-')
             {
                 data += this.Current;
                 this.Inc();
@@ -82,38 +83,38 @@ namespace Rabbit.World
 
         public WorldState Parse()
         {
-            ReadString("worldstate::");
-            int round = ReadInt();
-            Read(';');
-            var players = ReadPlayers();
-            Read(';');
-            var compteurs = ReadCompteurs();
-            Read(';');
-            var caddies = ReadCaddies();
-            Read(';');
+            this.ReadString("worldstate::");
+            int round = this.ReadInt();
+            this.Read(';');
+            var players = this.ReadPlayers();
+            this.Read(';');
+            var compteurs = this.ReadCompteurs();
+            this.Read(';');
+            var caddies = this.ReadCaddies();
+            this.Read(';');
 
             return WorldState.Create(round, players, compteurs, caddies);
         }
-        
+
         private List<Player> ReadPlayers()
         {
             var players = new List<Player>(6);
 
-            while (Current != ';')
+            while (this.Current != ';')
             {
-                int id = ReadInt();
-                Read(',');
-                int x = ReadInt();
-                Read(',');
-                int y = ReadInt();
-                Read(',');
-                int score = ReadInt();
-                Read(',');
-                PlayerState state = ReadState();
+                int id = this.ReadInt();
+                this.Read(',');
+                int x = this.ReadInt();
+                this.Read(',');
+                int y = this.ReadInt();
+                this.Read(',');
+                int score = this.ReadInt();
+                this.Read(',');
+                PlayerState state = this.ReadState();
                 players.Add(new Player(x, y, score, state));
-                if (Current == ':')
+                if (this.Current == ':')
                 {
-                    Read(':');
+                    this.Read(':');
                 }
             }
 
@@ -123,27 +124,27 @@ namespace Rabbit.World
         private PlayerState ReadState()
         {
             var data = String.Empty;
-            while (Current != ';' && Current != ':')
+            while (this.Current != ';' && this.Current != ':')
             {
                 data += this.Current;
                 this.Inc();
             }
-            var state = (PlayerState)Enum.Parse(typeof(PlayerState), data, true);
+            var state = (PlayerState) Enum.Parse(typeof (PlayerState), data, true);
             return state;
         }
 
         private List<Compteur> ReadCompteurs()
         {
             var compteurs = new List<Compteur>(8);
-            while (Current != ';')
+            while (this.Current != ';')
             {
-                int x = ReadInt();
-                Read(',');
-                int y = ReadInt();
+                int x = this.ReadInt();
+                this.Read(',');
+                int y = this.ReadInt();
                 compteurs.Add(new Compteur(x, y));
-                if (Current == ':')
+                if (this.Current == ':')
                 {
-                    Read(':');
+                    this.Read(':');
                 }
             }
             return compteurs;
@@ -152,22 +153,20 @@ namespace Rabbit.World
         private List<Caddy> ReadCaddies()
         {
             var caddies = new List<Caddy>(8);
-            while (Current != ';')
+            while (this.Current != ';')
             {
-                int i = ReadInt();
-                Read(',');
-                int x = ReadInt();
-                Read(',');
-                int y = ReadInt();
+                int i = this.ReadInt();
+                this.Read(',');
+                int x = this.ReadInt();
+                this.Read(',');
+                int y = this.ReadInt();
                 caddies.Add(new Caddy(x, y));
-                if (Current == ':')
+                if (this.Current == ':')
                 {
-                    Read(':');
+                    this.Read(':');
                 }
             }
             return caddies;
         }
-
-
     }
 }

@@ -10,16 +10,16 @@ namespace Rabbit.Client
         int Receive(byte[] data);
     }
 
-    class SocketWrapper : ISocket
+    internal class SocketWrapper : ISocket
     {
-        Socket server;
+        private Socket server;
 
         public void Connect(string host, int port)
         {
-            Log.Write("Creating socket");
+            Log.Debug("Creating socket");
 
             this.server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Log.Write("IP is: {0}", host);
+            Log.Debug("IP is: {0}", host);
 
             try
             {
@@ -31,8 +31,8 @@ namespace Rabbit.Client
             }
             catch (Exception ex)
             {
-                Log.Write("Exception occured while connecting");
-                Log.Write(ex.ToString());
+                Log.Error("Exception occured while connecting");
+                Log.Error(ex.ToString());
                 throw;
             }
         }
@@ -47,5 +47,4 @@ namespace Rabbit.Client
             return this.server.Receive(data);
         }
     }
-
 }

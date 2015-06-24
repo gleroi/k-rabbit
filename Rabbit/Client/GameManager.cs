@@ -3,16 +3,16 @@ using System.Net.Http;
 
 namespace Rabbit.Client
 {
-    class GameManager
+    internal class GameManager
     {
-        readonly HttpClient http;
+        private readonly HttpClient http;
 
         public GameManager()
         {
             this.http = new HttpClient();
         }
 
-        const string BASE = "http://battle.gate.vm.gate.erdf.fr:8080/";
+        public const string BASE = "http://battle.gate.vm.gate.erdf.fr:8080/";
 
         private const string ENV = "test/";
 
@@ -21,7 +21,6 @@ namespace Rabbit.Client
         private const string START = "startBattle?gameId={0}&teamId={1}&secret={2}";
 
         private const string STOP = "stopBattle?gameId={0}&teamId={1}&secret={2}";
-
 
         private string BuildUrl(string url)
         {
@@ -37,25 +36,24 @@ namespace Rabbit.Client
 
         public int Create(int teamId, string secret)
         {
-            var url = BuildUrl(String.Format(CREATE, teamId, secret));
-            var result = RunQuery(url);
-            Log.Write("Game {0} created", result);
+            var url = this.BuildUrl(String.Format(CREATE, teamId, secret));
+            var result = this.RunQuery(url);
+            Log.Info("Game {0} created", result);
             return int.Parse(result);
         }
 
-
         public void StartGame(int gameId, int teamId, string secret)
         {
-            var url = BuildUrl(String.Format(START, gameId, teamId, secret));
-            RunQuery(url);
-            Log.Write("Game {0} started", gameId);
+            var url = this.BuildUrl(String.Format(START, gameId, teamId, secret));
+            this.RunQuery(url);
+            Log.Info("Game {0} started", gameId);
         }
 
         public void StopGame(int gameId, int teamId, string secret)
         {
-            var url = BuildUrl(String.Format(STOP, gameId, teamId, secret));
-            RunQuery(url);
-            Log.Write("Game {0} stopped", gameId);
+            var url = this.BuildUrl(String.Format(STOP, gameId, teamId, secret));
+            this.RunQuery(url);
+            Log.Info("Game {0} stopped", gameId);
         }
     }
 }
