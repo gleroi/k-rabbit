@@ -121,10 +121,10 @@ namespace Rabbit.World
 
     internal class WorldState
     {
-        public int Round { get; }
-        public List<Player> Players { get; }
-        public List<Compteur> Compteurs { get; }
-        public List<Caddy> Caddies { get; }
+        public readonly int Round;
+        public readonly List<Player> Players;
+        public readonly List<Compteur> Compteurs;
+        public readonly List<Caddy> Caddies;
 
         public const int MAP_WIDTH = 16;
         public const int MAP_HEIGHT = 13;

@@ -1,5 +1,5 @@
 ﻿using System.Text;
-
+using System.Linq;
 using Rabbit.Client;
 using Xunit;
 using Xunit.Abstractions;
