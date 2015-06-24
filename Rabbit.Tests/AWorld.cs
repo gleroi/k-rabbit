@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Rabbit.World;
+﻿using Rabbit.World;
 using Xunit;
 
 namespace Rabbit.Tests
 {
-    static class AWorld
+    internal static class AWorld
     {
         public static WorldState WithOnePlayerAt(int x, int y)
         {
@@ -20,6 +15,23 @@ namespace Rabbit.Tests
 
             var prevPlayer = world.Players[0];
             APlayer.Is(prevPlayer, x, y, 0, PlayerState.Playing);
+            return world;
+        }
+
+        public static WorldState GivenWorld()
+        {
+            return new WorldState();
+        }
+
+        public static WorldState WithPlayer(this WorldState world, int x, int y)
+        {
+            world.Players.Add(new Player(x, y, 0, PlayerState.Playing));
+            return world;
+        }
+
+        public static WorldState WithCompteur(this WorldState world, int x, int y)
+        {
+            world.Compteurs.Add(new Compteur(x, y));
             return world;
         }
     }

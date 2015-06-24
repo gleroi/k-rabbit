@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\BasicAiTests.cs" />
+    <Compile Include="AI\ClosestCompteurTests.cs" />
     <Compile Include="AI\TreeTests.cs" />
     <Compile Include="APlayer.cs" />
     <Compile Include="AWorld.cs" />
