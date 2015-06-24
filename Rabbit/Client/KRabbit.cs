@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,30 +40,38 @@ namespace Rabbit.Client
                     case MessageType.InscriptionOk:
                         break;
                     case MessageType.WorkState:
-
-                        var parser = new WorldParser(msg.Data);
-                        var world = parser.Parse();
-                        Log.Info("Player {0} round {1}", this.Id, world.Round);
-                        Direction direction;
-
-                        try
-                        {
-                            direction = this.Ai.Decide(world);
-                        }
-                        catch (Exception e)
-                        {
-                            direction = (Direction) this.random.Next(0, 4);
-                        }
-                        finally
-                        {
-                            this.Ai = this.Ai.NextAi();
-                        }
-
-                        Log.Info("Player {0} decides {1}", this.Id, direction);
-                        this.Client.SendMove(world.Round, direction);
+                        this.HandleWorldState(msg);
                         break;
                 }
             }
+        }
+
+        private void HandleWorldState(Message msg)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+
+            var parser = new WorldParser(msg.Data);
+            var world = parser.Parse();
+            Log.Info("Player {0} round {1}", this.Id, world.Round);
+            Direction direction;
+
+            try
+            {
+                direction = this.Ai.Decide(world);
+            }
+            catch (Exception e)
+            {
+                direction = (Direction) this.random.Next(0, 4);
+            }
+            finally
+            {
+                this.Ai = this.Ai.NextAi();
+            }
+            this.Client.SendMove(world.Round, direction);
+
+            watch.Stop();
+
+            Log.Info("Player {0} decides {1} in {2}ms", this.Id, direction, watch.ElapsedMilliseconds);
         }
     }
 }
