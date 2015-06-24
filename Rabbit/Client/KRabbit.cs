@@ -67,9 +67,9 @@ namespace Rabbit.Client
             {
                 this.Ai = this.Ai.NextAi();
             }
-            this.Client.SendMove(world.Round, direction);
-
             watch.Stop();
+
+            this.Client.SendMove(world.Round, direction);
 
             Log.Info("Player {0} decides {1} in {2}ms", this.Id, direction, watch.ElapsedMilliseconds);
         }
