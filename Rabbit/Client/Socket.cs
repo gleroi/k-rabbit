@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 namespace Rabbit.Client
 {
@@ -14,9 +10,9 @@ namespace Rabbit.Client
         int Receive(byte[] data);
     }
 
-    class SocketWrapper : ISocket
+    internal class SocketWrapper : ISocket
     {
-        Socket server;
+        private Socket server;
 
         public void Connect(string host, int port)
         {
@@ -51,5 +47,4 @@ namespace Rabbit.Client
             return this.server.Receive(data);
         }
     }
-
 }

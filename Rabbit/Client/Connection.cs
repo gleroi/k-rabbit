@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 
 namespace Rabbit.Client
@@ -29,7 +28,7 @@ namespace Rabbit.Client
         {
             Log.Debug("Reading message from server");
 
-            var lines = ReadData();
+            var lines = this.ReadData();
 
             foreach (var data in lines)
             {
@@ -72,12 +71,12 @@ namespace Rabbit.Client
         {
             const int BUFFER_LEN = 1024;
             var recvData = new byte[BUFFER_LEN];
-            int recvLen = 0;
 
             Log.Debug("Reading data");
 
             while (true)
             {
+                var recvLen = 0;
                 try
                 {
                     recvLen = this.server.Receive(recvData);

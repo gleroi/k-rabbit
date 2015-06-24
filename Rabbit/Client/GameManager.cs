@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 
 namespace Rabbit.Client
 {
-    using System.Security.Policy;
-
-    class GameManager
+    internal class GameManager
     {
-        readonly HttpClient http;
+        private readonly HttpClient http;
 
         public GameManager()
         {
@@ -27,7 +22,6 @@ namespace Rabbit.Client
 
         private const string STOP = "stopBattle?gameId={0}&teamId={1}&secret={2}";
 
-
         private string BuildUrl(string url)
         {
             return BASE + ENV + url;
@@ -42,24 +36,23 @@ namespace Rabbit.Client
 
         public int Create(int teamId, string secret)
         {
-            var url = BuildUrl(String.Format(CREATE, teamId, secret));
-            var result = RunQuery(url);
+            var url = this.BuildUrl(String.Format(CREATE, teamId, secret));
+            var result = this.RunQuery(url);
             Log.Info("Game {0} created", result);
             return int.Parse(result);
         }
 
-
         public void StartGame(int gameId, int teamId, string secret)
         {
-            var url = BuildUrl(String.Format(START, gameId, teamId, secret));
-            RunQuery(url);
+            var url = this.BuildUrl(String.Format(START, gameId, teamId, secret));
+            this.RunQuery(url);
             Log.Info("Game {0} started", gameId);
         }
 
         public void StopGame(int gameId, int teamId, string secret)
         {
-            var url = BuildUrl(String.Format(STOP, gameId, teamId, secret));
-            RunQuery(url);
+            var url = this.BuildUrl(String.Format(STOP, gameId, teamId, secret));
+            this.RunQuery(url);
             Log.Info("Game {0} stopped", gameId);
         }
     }
