@@ -15,6 +15,7 @@ namespace Rabbit.World
         {
             this.State = state;
             this.Id = meId;
+            this.BuildMap();
         }
 
         private void BuildMap()

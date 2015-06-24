@@ -48,9 +48,16 @@ namespace Rabbit.World
             }
         }
 
+        int Square(int x) { return x * x; }
+
         internal int Dist(Point p)
         {
             return Math.Abs(p.X - this.X) + Math.Abs(p.Y - this.Y);
+        }
+
+        internal double EuclidianDist(Point p)
+        {
+            return Math.Sqrt(Square(p.X - this.X) + Square(p.Y - this.Y));
         }
     }
 

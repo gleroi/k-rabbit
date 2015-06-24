@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="AI\BasicAiTests.cs" />
     <Compile Include="AI\ClosestCompteurTests.cs" />
+    <Compile Include="AI\MoveToTests.cs" />
     <Compile Include="AI\TreeTests.cs" />
     <Compile Include="APlayer.cs" />
     <Compile Include="AWorld.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Client\SocketFake.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestAi.cs" />
     <Compile Include="World\ACompteur.cs" />
     <Compile Include="World\Parser\ParserTests.cs" />
     <Compile Include="World\Parser\ReadDigitTests.cs" />

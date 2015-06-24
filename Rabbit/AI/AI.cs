@@ -75,7 +75,7 @@ namespace Rabbit.AI
             return myCpt;
         }
 
-        protected Direction MoveTo(WorldState world, Point cpos)
+        public Direction MoveTo(WorldState world, Point cpos)
         {
             var me = world.Players[this.Id].Pos;
             var bestmoves = GetMoveInOrder(cpos, me);
@@ -100,45 +100,15 @@ namespace Rabbit.AI
 
         private static List<Direction> GetMoveInOrder(Point cpos, Point me)
         {
-            List<Direction> goods = new List<Direction>();
-            var bads = new List<Direction>();
+            var dirs = new List<Tuple<double, Direction>>();
 
-            var horizontal = cpos.X - me.X;
-            if (horizontal > 0)
+            for (int i = 0; i < 4; i++)
             {
-                goods.Add(Direction.E);
-                bads.Add(Direction.O);
+                var direction = (Direction)i;
+                var next = me.Move(direction);
+                dirs.Add(new Tuple<double, Direction>(cpos.EuclidianDist(next), direction));
             }
-            else if (horizontal < 0)
-            {
-                goods.Add(Direction.O);
-                bads.Add(Direction.E);
-            }
-            else
-            {
-                bads.Add(Direction.E);
-                bads.Add(Direction.O);
-            }
-
-            var vertical = cpos.Y - me.Y;
-            if (vertical > 0)
-            {
-                goods.Add(Direction.N);
-                bads.Add(Direction.S);
-            }
-            else if (vertical < 0)
-            {
-                goods.Add(Direction.S);
-                bads.Add(Direction.N);
-            }
-            else
-            {
-                bads.Add(Direction.S);
-                bads.Add(Direction.N);
-            }
-
-            goods.AddRange(bads);
-            return goods;
+            return dirs.OrderBy(t => t.Item1).Select(t => t.Item2).ToList();
         }
 
         public Direction GoHome(WorldState world)
