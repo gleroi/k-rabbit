@@ -42,7 +42,7 @@ namespace Rabbit.Client
 
                         var parser = new WorldParser(msg.Data);
                         var world = parser.Parse();
-                        Log.Write("Player {0} round {1}", this.Id, world.Round);
+                        Log.Info("Player {0} round {1}", this.Id, world.Round);
                         Direction direction;
 
                         try
@@ -58,7 +58,7 @@ namespace Rabbit.Client
                             this.Ai = this.Ai.NextAi();
                         }
 
-                        Log.Write("Player {0} decides {1}", this.Id, direction);
+                        Log.Info("Player {0} decides {1}", this.Id, direction);
                         this.Client.SendMove(world.Round, direction);
                         break;
                 }

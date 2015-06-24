@@ -20,14 +20,14 @@ namespace Rabbit.Client
 
         public void Connect()
         {
-            Log.Write("Connection to {0}:{1}", this.Host, this.Port);
+            Log.Debug("Connection to {0}:{1}", this.Host, this.Port);
 
             this.server.Connect(this.Host, this.Port);
         }
 
         public IEnumerable<Message> Receive()
         {
-            Log.Write("Reading message from server");
+            Log.Debug("Reading message from server");
 
             var lines = ReadData();
 
@@ -58,11 +58,11 @@ namespace Rabbit.Client
 
                 else
                 {
-                    Log.Write("Unknown message: " + data);
+                    Log.Error("Unknown message: " + data);
                     continue;
                 }
 
-                Log.Write("Message Recu: " + msg.Type);
+                Log.Debug("Message Recu: " + msg.Type);
 
                 yield return msg;
             }
@@ -74,7 +74,7 @@ namespace Rabbit.Client
             var recvData = new byte[BUFFER_LEN];
             int recvLen = 0;
 
-            Log.Write("Reading data");
+            Log.Debug("Reading data");
 
             while (true)
             {
@@ -84,8 +84,8 @@ namespace Rabbit.Client
                 }
                 catch (Exception ex)
                 {
-                    Log.Write("Exception while receiving message");
-                    Log.Write(ex.ToString());
+                    Log.Error("Exception while receiving message");
+                    Log.Error(ex.ToString());
                     throw;
                 }
 
@@ -111,16 +111,16 @@ namespace Rabbit.Client
             var data = Encoding.ASCII.GetBytes(msg + "\n");
             try
             {
-                Log.Write("Sending " + data.Length + " bytes");
+                Log.Debug("Sending " + data.Length + " bytes");
 
                 int sent = this.server.Send(data);
 
-                Log.Write("Sended " + sent + " bytes");
+                Log.Debug("Sended " + sent + " bytes");
             }
             catch (Exception ex)
             {
-                Log.Write("Exception while sending: " + msg);
-                Log.Write(ex.ToString());
+                Log.Error("Exception while sending: " + msg);
+                Log.Error(ex.ToString());
             }
         }
     }

@@ -44,7 +44,7 @@ namespace Rabbit.Client
         {
             var url = BuildUrl(String.Format(CREATE, teamId, secret));
             var result = RunQuery(url);
-            Log.Write("Game {0} created", result);
+            Log.Info("Game {0} created", result);
             return int.Parse(result);
         }
 
@@ -53,14 +53,14 @@ namespace Rabbit.Client
         {
             var url = BuildUrl(String.Format(START, gameId, teamId, secret));
             RunQuery(url);
-            Log.Write("Game {0} started", gameId);
+            Log.Info("Game {0} started", gameId);
         }
 
         public void StopGame(int gameId, int teamId, string secret)
         {
             var url = BuildUrl(String.Format(STOP, gameId, teamId, secret));
             RunQuery(url);
-            Log.Write("Game {0} stopped", gameId);
+            Log.Info("Game {0} stopped", gameId);
         }
     }
 }

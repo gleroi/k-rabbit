@@ -1,33 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Diagnostics;
-using NLog;
+﻿using NLog;
 
 namespace Rabbit
 {
-    static class Log
+    internal static class Log
     {
-        private static Logger _instance = null;
+        private static Logger _instance;
+
         private static Logger Instance
         {
-            get
-            {
-                return _instance ?? (_instance = LogManager.GetLogger("Default"));
-            }
+            get { return _instance ?? (_instance = LogManager.GetLogger("Default")); }
         }
 
-        public static void Write(string message)
+        public static void Debug(string message)
         {
-            Debug.WriteLine(message);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(message);
+            Instance.Debug(message);
+#endif
+        }
+
+        public static void Debug(string format, params object[] parameters)
+        {
+
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine(format, parameters);
+            Instance.Debug(format, parameters);
+#endif
+        }
+
+        public static void Info(string message)
+        {
+            System.Diagnostics.Debug.WriteLine(message);
             Instance.Info(message);
         }
 
-        public static void Write(string format, params object[] parameters)
+        public static void Info(string format, params object[] parameters)
         {
-            Debug.WriteLine(format, parameters);
+            System.Diagnostics.Debug.WriteLine(format, parameters);
             Instance.Info(format, parameters);
+        }
+
+        public static void Error(string message)
+        {
+            System.Diagnostics.Debug.WriteLine(message);
+            Instance.Error(message);
+        }
+
+        public static void Error(string format, params object[] parameters)
+        {
+            System.Diagnostics.Debug.WriteLine(format, parameters);
+            Instance.Error(format, parameters);
         }
     }
 }

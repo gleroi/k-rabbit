@@ -31,11 +31,11 @@ namespace Rabbit.Client
 
         private void SendInscripton()
         {
-            Log.Write("Sending inscription");
+            Log.Debug("Sending inscription");
 
             var msg = this.GetInscripitionMessage();
 
-            Log.Write("Inscription is " + msg);
+            Log.Debug("Inscription is " + msg);
 
             this.Server.Send(msg);
         }
@@ -47,7 +47,7 @@ namespace Rabbit.Client
 
         private void WaitInscriptionAck()
         {
-            Log.Write("Waiting for inscripton acknowledgement");
+            Log.Debug("Waiting for inscripton acknowledgement");
 
             var msg = this.Server.Receive().First();
 
@@ -57,29 +57,29 @@ namespace Rabbit.Client
                 case MessageType.GameOver:
                     throw new ConnectionException("Connection failed: " + msg.Data);
                 default:
-                    Log.Write("Connection: receveived: " + msg.Data);
+                    Log.Debug("Connection: receveived: " + msg.Data);
                     return;
             }
         }
 
         public IEnumerable<Message> WaitMessages()
         {
-            Log.Write("Waiting for message");
+            Log.Debug("Waiting for message");
 
             foreach (var msg in this.Server.Receive())
             {
-                Log.Write("Message received :" + msg.Data);
+                Log.Debug("Message received :" + msg.Data);
                 yield return msg;
             }
         }
 
         public void SendMove(int round, Direction direction)
         {
-            Log.Write("Sending move");
+            Log.Debug("Sending move");
 
             var msg = GetMoveMessage(round, direction);
 
-            Log.Write("Move is " + msg);
+            Log.Debug("Move is " + msg);
 
             this.Server.Send(msg);
         }

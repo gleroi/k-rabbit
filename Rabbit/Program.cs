@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using Rabbit.AI;
+using Rabbit.Client;
 
 namespace Rabbit
 {
-    using System.Threading.Tasks;
-
-    using Rabbit.AI;
-    using Rabbit.Client;
-
-    class Program
+    internal class Program
     {
-        static public int TeamId = 170;
-        static public string Secret = "mUrUs2";
+        public static int TeamId = 170;
+        public static string Secret = "mUrUs2";
 
         public static int Port = 2026;
 
@@ -25,7 +20,7 @@ namespace Rabbit
 
         public static int GameId = -1;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (args.Length != 2 && args.Length != 0)
             {
@@ -38,7 +33,7 @@ namespace Rabbit
 
             GameId = manager.Create(TeamId, Secret);
 
-            Log.Write("Game ID is : " + GameId);
+            Log.Debug("Game ID is : " + GameId);
 
             if (GameId == -1)
             {
@@ -51,10 +46,10 @@ namespace Rabbit
                 var subId = i;
                 Task task = new Task(
                     () =>
-                        {
-                            var rabbit = new KRabbit(subId, new GoCompteurAi(subId), GameId);
-                            rabbit.Run();
-                        });
+                    {
+                        var rabbit = new KRabbit(subId, new GoCompteurAi(subId), GameId);
+                        rabbit.Run();
+                    });
                 task.Start();
                 rabbits[i] = task;
             }
@@ -81,7 +76,7 @@ namespace Rabbit
 
             var console = new ColoredConsoleTarget();
             config.AddTarget("console", console);
-            var cRule = new LoggingRule("*", LogLevel.Debug, console);
+            var cRule = new LoggingRule("*", LogLevel.Info, console);
             config.LoggingRules.Add(cRule);
 
             var file = new FileTarget();
