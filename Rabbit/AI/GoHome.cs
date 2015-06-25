@@ -8,7 +8,7 @@ namespace Rabbit.AI
         public GoHome(int id)
             : base(id) {}
 
-        public override Direction Decide(WorldState world)
+        protected override Direction InnerDecide(WorldState world)
         {
             return this.GoHome(world);
         }

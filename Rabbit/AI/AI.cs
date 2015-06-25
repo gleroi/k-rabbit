@@ -75,19 +75,30 @@ namespace Rabbit.AI
             return myCpt;
         }
 
-        public Direction MoveTo(WorldState world, Point cpos)
+        public Direction MoveTo(WorldState world, Point cpos, Func<CellState, bool> strategy)
         {
             var me = world.Players[this.Id].Pos;
             var bestmoves = GetMoveInOrder(cpos, me);
 
-            var direction = FirstBest(bestmoves, me, 
-                state => !state.HasFlag(CellState.Impossible) && !state.HasFlag(CellState.RiskBaffe));
 
+            var direction = FirstBest(bestmoves, me, strategy);
+
+            Log.Debug("Player {0} best move is {1}", this.Id, direction);
+            
             if (!direction.HasValue)
             {
+                Log.Debug("Player {0} has no safe moves", this.Id, String.Join(",", bestmoves));
+
                 direction = FirstBest(bestmoves, me, state => !state.HasFlag(CellState.Impossible));
+
+                Log.Debug("Player {0} second best move is {1}", this.Id, direction);
+
             }
-            return direction.GetValueOrDefault(Direction.E);
+            var move = direction.GetValueOrDefault(Direction.E);
+
+            Log.Debug("Player {0} move is {1}", this.Id, move);
+
+            return move;
         }
 
         private Direction? FirstBest(List<Direction> bestmoves, Point me, Func<CellState, bool> predicate)
@@ -104,7 +115,7 @@ namespace Rabbit.AI
             return null;
         }
 
-        private static List<Direction> GetMoveInOrder(Point cpos, Point me)
+        private List<Direction> GetMoveInOrder(Point cpos, Point me)
         {
             var dirs = new List<Tuple<double, Direction>>();
 
@@ -114,23 +125,37 @@ namespace Rabbit.AI
                 var next = me.Move(direction);
                 dirs.Add(new Tuple<double, Direction>(cpos.Dist(next), direction));
             }
-            return dirs.OrderBy(t => t.Item1).Select(t => t.Item2).ToList();
+            dirs.Sort();
+
+            Log.Debug("Player {0} best moves are {1}", this.Id, String.Join(",", dirs));
+
+            return dirs.Select(t => t.Item2).ToList();
         }
 
         public Direction GoHome(WorldState world)
         {
             var home = world.Caddies[this.Id].Pos;
-            var direction = this.MoveTo(world, home);
+            //TODO: utiliser un MoveTo ou on se preoccupe de prendre une baffe
+            var direction = this.MoveTo(world, home, 
+                state => !state.HasFlag(CellState.Impossible) && !state.HasFlag(CellState.RiskBaffe));
             return direction;
         }
 
         public Direction GoClosestCompteur(WorldState world)
         {
             var cpt = this.FindClosestCompteur(world);
-            var direction = this.MoveTo(world, world.Compteurs[cpt].Pos);
+            //TODO: utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
+            var direction = this.MoveTo(world, world.Compteurs[cpt].Pos, 
+                state => !state.HasFlag(CellState.Impossible));
             return direction;
         }
 
-        public abstract Direction Decide(WorldState world);
+        public Direction Decide(WorldState world)
+        {
+            this.Map = new Map(world, this.Id);
+            return this.InnerDecide(world);
+        }
+
+        protected abstract Direction InnerDecide(WorldState world);
     }
 }

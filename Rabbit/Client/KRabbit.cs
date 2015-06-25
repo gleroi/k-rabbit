@@ -1,27 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Rabbit.AI;
+using Rabbit.World;
 
 namespace Rabbit.Client
 {
-    using Rabbit.AI;
-    using Rabbit.World;
-
-    class KRabbit
+    internal class KRabbit
     {
         private readonly int Id;
         private Ai Ai;
-        private Client Client;
-        private Random random = new Random();
+        private readonly Client Client;
+        private readonly Random random = new Random();
 
         public KRabbit(int id, Ai ai, int gameId)
         {
             this.Id = id;
             this.Ai = ai;
-            this.Client = new Client(new Connection(Program.Host, Program.Port, new SocketWrapper()), Program.Secret, gameId, Program.TeamId + id);
+            this.Client = new Client(new Connection(Program.Host, Program.Port, new SocketWrapper()), Program.Secret,
+                                     gameId, Program.TeamId + id);
         }
 
         public void Run()
@@ -61,7 +57,9 @@ namespace Rabbit.Client
             }
             catch (Exception e)
             {
+                Log.Error(e.ToString());
                 direction = (Direction) this.random.Next(0, 4);
+                Log.Error("Player {0} decides randomly {1}", this.Id, direction);
             }
             finally
             {

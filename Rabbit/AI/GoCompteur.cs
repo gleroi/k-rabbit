@@ -10,7 +10,7 @@ namespace Rabbit.AI
         public GoCompteur(int id)
             : base(id) {}
 
-        public override Direction Decide(WorldState world)
+        protected override Direction InnerDecide(WorldState world)
         {
             return this.GoClosestCompteur(world);
         }

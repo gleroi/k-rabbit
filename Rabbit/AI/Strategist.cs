@@ -9,10 +9,8 @@ namespace Rabbit.AI
         public Strategist(int id)
             : base(id) {}
 
-        public override Direction Decide(WorldState world)
+        protected override Direction InnerDecide(WorldState world)
         {
-            this.Map = new Map(world, this.Id);
-
             var decide = SelectTactic(world);
             return decide(world);
         }

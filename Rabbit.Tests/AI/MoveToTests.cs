@@ -11,6 +11,12 @@ namespace Rabbit.Tests.AI
 {
     public class MoveToTests
     {
+
+        static bool MoveStrategy(CellState state)
+        {
+            return !state.HasFlag(CellState.Impossible) && !state.HasFlag(CellState.RiskBaffe);
+        } 
+
         private static List<Direction> WhenMoving(WorldState world, TestAi ai, Point depart, Point destination, out Point lastPosition, int maxIteration = int.MinValue)
         {
             var distance = destination.Dist(depart);
@@ -22,7 +28,7 @@ namespace Rabbit.Tests.AI
             lastPosition = depart;
             while (lastPosition != destination && i < maxIteration)
             {
-                var dir = ai.MoveTo(world, destination);
+                var dir = ai.MoveTo(world, destination, MoveStrategy);
                 directions.Add(dir);
 
                 var next = lastPosition.Move(dir);
@@ -45,7 +51,7 @@ namespace Rabbit.Tests.AI
 
             var ai = new TestAi(0, world);
 
-            var direction = ai.MoveTo(world, new Point(x, y));
+            var direction = ai.MoveTo(world, new Point(x, y), MoveStrategy);
             Assert.Equal(expectedDirection, direction);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using NLog;
 using NLog.Config;
@@ -39,7 +40,7 @@ namespace Rabbit
             {
                 return;
             }
-            const int MAX_RABBITS = 1;
+            const int MAX_RABBITS = 6;
             var rabbits = new Task[MAX_RABBITS];
             for (int i = 0; i < MAX_RABBITS; i++)
             {
@@ -47,7 +48,7 @@ namespace Rabbit
                 Task task = new Task(
                     () =>
                     {
-                        var rabbit = new KRabbit(subId, new GoCompteur(subId), GameId);
+                        var rabbit = new KRabbit(subId, new Strategist(subId), GameId);
                         rabbit.Run();
                     });
                 task.Start();
@@ -58,14 +59,20 @@ namespace Rabbit
 
             try
             {
+#if DEBUG
+                Thread.Sleep(1000);
+
                 Process.Start(GameManager.BASE + "?gameId=" + GameId);
 
                 manager.StartGame(GameId, TeamId, Secret);
+#endif
                 Task.WaitAll(rabbits);
             }
             catch (Exception)
             {
+#if DEBUG
                 manager.StopGame(GameId, TeamId, Secret);
+#endif
                 throw;
             }
         }
@@ -90,8 +97,10 @@ namespace Rabbit
 
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
+#if DEBUG
             var manager = new GameManager();
             manager.StopGame(GameId, TeamId, Secret);
+#endif
         }
     }
 }

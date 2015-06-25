@@ -12,7 +12,7 @@ namespace Rabbit.AI
         public BaffeAi(int id)
             : base(id) {}
 
-        public override Direction Decide(WorldState world)
+        protected override Direction InnerDecide(WorldState world)
         {
             return Direction.N;
         }

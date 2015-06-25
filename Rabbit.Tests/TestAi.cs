@@ -16,7 +16,7 @@ namespace Rabbit.Tests
             this.Map = new Map(world, id);
         }
 
-        public override Direction Decide(Rabbit.World.WorldState world)
+        protected override Direction InnerDecide(WorldState world)
         {
             return Direction.N;
         }
