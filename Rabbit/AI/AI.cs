@@ -80,22 +80,28 @@ namespace Rabbit.AI
             var me = world.Players[this.Id].Pos;
             var bestmoves = GetMoveInOrder(cpos, me);
 
+            var direction = FirstBest(bestmoves, me, 
+                state => !state.HasFlag(CellState.Impossible) && !state.HasFlag(CellState.RiskBaffe));
+
+            if (!direction.HasValue)
+            {
+                direction = FirstBest(bestmoves, me, state => !state.HasFlag(CellState.Impossible));
+            }
+            return direction.GetValueOrDefault(Direction.E);
+        }
+
+        private Direction? FirstBest(List<Direction> bestmoves, Point me, Func<CellState, bool> predicate)
+        {
             foreach (var direction in bestmoves)
             {
                 var nextPos = me.Move(direction);
                 var state = this.Map.GetCell(nextPos);
-                if (!state.HasFlag(CellState.Impossible) && !state.HasFlag(CellState.RiskBaffe))
+                if (predicate(state))
                 {
                     return direction;
                 }
             }
-            var dir = bestmoves.FirstOrDefault(d =>
-            {
-                var nextPos = me.Move(d);
-                var state = this.Map.GetCell(nextPos);
-                return !state.HasFlag(CellState.Impossible);
-            });
-            return dir;
+            return null;
         }
 
         private static List<Direction> GetMoveInOrder(Point cpos, Point me)
