@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Rabbit.World
 {
@@ -96,6 +97,24 @@ namespace Rabbit.World
                     this.FillAround(player, CellState.RiskBaffe);
                 }
             }
+        }
+
+        public static Point[] PointsAround(Point player)
+        {
+            int x = player.X + 1;
+            int y = player.Y + 1;
+
+            var result = new Point[8];
+
+            result[0] = new Point(x + 2, y);
+            result[1] = new Point(x + 1, y + 1);
+            result[2] = new Point(x, y + 2);
+            result[3] = new Point(x - 1, y + 1);
+            result[4] = new Point(x - 2, y);
+            result[5] = new Point(x - 1, y - 1);
+            result[6] = new Point(x, y - 2);
+            result[7] = new Point(x + 1, y - 1);
+            return result;
         }
 
         private void FillAround(Point player, CellState state)
