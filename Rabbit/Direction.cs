@@ -3,8 +3,8 @@
     public enum Direction
     {
         N,
-        S,
         E,
+        S,
         O
     }
 }

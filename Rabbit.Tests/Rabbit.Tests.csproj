@@ -55,7 +55,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI\BasicAiTests.cs" />
     <Compile Include="AI\ClosestCompteurTests.cs" />
     <Compile Include="AI\MoveToTests.cs" />
     <Compile Include="AI\TreeTests.cs" />

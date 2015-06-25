@@ -106,7 +106,7 @@ namespace Rabbit.AI
             {
                 var direction = (Direction)i;
                 var next = me.Move(direction);
-                dirs.Add(new Tuple<double, Direction>(cpos.EuclidianDist(next), direction));
+                dirs.Add(new Tuple<double, Direction>(cpos.Dist(next), direction));
             }
             return dirs.OrderBy(t => t.Item1).Select(t => t.Item2).ToList();
         }

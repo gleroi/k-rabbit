@@ -48,12 +48,17 @@ namespace Rabbit.World
             }
         }
 
-        int Square(int x) { return x * x; }
-
+        /// <summary>
+        /// Manhattan distance
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         internal int Dist(Point p)
         {
             return Math.Abs(p.X - this.X) + Math.Abs(p.Y - this.Y);
         }
+
+        static int Square(int x) { return x * x; }
 
         internal double EuclidianDist(Point p)
         {

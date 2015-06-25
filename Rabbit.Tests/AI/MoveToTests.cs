@@ -82,8 +82,8 @@ namespace Rabbit.Tests.AI
 
             Assert.Equal(destination, lastPosition);
             Assert.Equal(new Direction[] { 
-                Direction.S, Direction.S ,
-                Direction.O, Direction.O, Direction.O, Direction.O, Direction.O },
+                Direction.S, Direction.S,
+                Direction.O, Direction.O, Direction.O, Direction.O, Direction.O } ,
                 directions);
         }
 
@@ -97,16 +97,17 @@ namespace Rabbit.Tests.AI
                 .WithPlayer(obstacle.X, obstacle.Y);
             var ai = new TestAi(0, world);
 
-            var destination = new Point(10, 5);
+            var destination = new Point(11, 5);
             Point lastPosition;
             List<Direction> directions = WhenMoving(world, ai, depart, destination, out lastPosition, 20);
 
             Assert.Equal(destination, lastPosition);
             Assert.Equal(new Direction[] { 
-                Direction.E, Direction.E, 
-                Direction.N, 
-                Direction.E, Direction.E, Direction.S,
-                Direction.E },
+                Direction.N, Direction.E,
+                Direction.N, Direction.E,
+                Direction.N, Direction.E, Direction.E, 
+                Direction.E, Direction.E,
+                Direction.S, Direction.S, Direction.S },
                 directions);
         }
     }
