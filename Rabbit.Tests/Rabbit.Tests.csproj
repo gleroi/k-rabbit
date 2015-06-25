@@ -68,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAi.cs" />
     <Compile Include="World\ACompteur.cs" />
+    <Compile Include="World\MapTests.cs" />
     <Compile Include="World\Parser\ParserTests.cs" />
     <Compile Include="World\Parser\ReadDigitTests.cs" />
     <Compile Include="World\Parser\WorldParserTests.cs" />
