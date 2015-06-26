@@ -40,6 +40,7 @@ namespace Rabbit
             {
                 return;
             }
+
             const int MAX_RABBITS = 6;
             var rabbits = new Task[MAX_RABBITS];
             for (int i = 0; i < MAX_RABBITS; i++)
