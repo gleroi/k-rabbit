@@ -36,6 +36,48 @@ namespace Rabbit.AI
         {
             var players = world.Players;
             var compteurs = world.Compteurs;
+            var distances = Ai.PlayerCompteurDistances(compteurs, players);
+
+            var myCpt = this.ClosestCompteur(world, distances, this.Id, cpt => !cpt.IsOwned);
+            if (myCpt == -1)
+            {
+                myCpt = this.ClosestCompteur(world, distances, this.Id, cpt => true);
+            }
+            return myCpt;
+        }
+
+        private int ClosestCompteur(WorldState world, List<Tuple<int, int>>[] distances, int playerId,
+            Func<Compteur, bool> compteurPredicate)
+        {
+            int myCpt = -1;
+            int minDist = int.MaxValue;
+            var len = distances[0].Count;
+
+            for (int pos = 0; pos < len; pos++)
+            {
+                for (var cpt = 0; cpt < distances.Length; cpt++)
+                {
+                    var compteur = world.Compteurs[cpt];
+                    if (compteurPredicate(compteur))
+                    {
+                        var cptDist = distances[cpt];
+                        if (cptDist[pos].Item2 == playerId && cptDist[pos].Item1 < minDist)
+                        {
+                            myCpt = cpt;
+                            minDist = cptDist[pos].Item1;
+                        }
+                    }
+                }
+                if (myCpt != -1)
+                {
+                    break;
+                }
+            }
+            return myCpt;
+        }
+
+        private static List<Tuple<int, int>>[] PlayerCompteurDistances(List<Compteur> compteurs, List<Player> players)
+        {
             List<Tuple<int, int>>[] distances = new List<Tuple<int, int>>[compteurs.Count];
 
             for (var c = 0; c < compteurs.Count; c++)
@@ -52,27 +94,7 @@ namespace Rabbit.AI
                 cptDist.Sort();
                 distances[c] = cptDist;
             }
-
-            int myCpt = -1;
-            int minDist = int.MaxValue;
-
-            for (int pos = 0; pos < players.Count; pos++)
-            {
-                for (var cpt = 0; cpt < distances.Length; cpt++)
-                {
-                    var cptDist = distances[cpt];
-                    if (cptDist[pos].Item2 == this.Id && cptDist[pos].Item1 < minDist)
-                    {
-                        myCpt = cpt;
-                        minDist = cptDist[pos].Item1;
-                    }
-                }
-                if (myCpt != -1)
-                {
-                    break;
-                }
-            }
-            return myCpt;
+            return distances;
         }
 
         public Direction MoveTo(WorldState world, Point cpos, Func<CellState, bool> strategy)
@@ -135,7 +157,7 @@ namespace Rabbit.AI
         public Direction GoHome(WorldState world)
         {
             var home = world.Caddies[this.Id].Pos;
-            //TODO: utiliser un MoveTo ou on se preoccupe de prendre une baffe
+            // utiliser un MoveTo ou on se preoccupe de prendre une baffe
             var direction = this.MoveTo(world, home, 
                 state => !state.HasFlag(CellState.Impossible) && !state.HasFlag(CellState.RiskBaffe));
             return direction;
@@ -144,7 +166,7 @@ namespace Rabbit.AI
         public Direction GoClosestCompteur(WorldState world)
         {
             var cpt = this.FindClosestCompteur(world);
-            //TODO: utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
+            // utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
             var direction = this.MoveTo(world, world.Compteurs[cpt].Pos, 
                 state => !state.HasFlag(CellState.Impossible));
             return direction;

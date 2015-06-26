@@ -71,6 +71,7 @@ namespace Rabbit.World
         public readonly Point Pos;
         public readonly int Score;
         public readonly PlayerState State;
+        public readonly int Id;
 
         public Point Caddy { get; private set; }
 
@@ -81,9 +82,10 @@ namespace Rabbit.World
 
         public int CompteurId { get; private set; }
 
-        public Player(int x, int y, int score, PlayerState state)
+        public Player(int id, int x, int y, int score, PlayerState state)
             : this()
         {
+            this.Id = id;
             this.Pos = new Point(x, y);
             this.Score = score;
             this.State = state;
@@ -99,16 +101,25 @@ namespace Rabbit.World
         {
             this.Caddy = caddy;
         }
+
     }
 
     internal struct Compteur
     {
         public readonly Point Pos;
+        public int PlayerId { get; private set; }
 
+        public bool IsOwned { get { return this.PlayerId != -1; } }
         public Compteur(int x, int y)
             : this()
         {
             this.Pos = new Point(x, y);
+            this.PlayerId = -1;
+        }
+
+        public void UpdatePlayer(int id)
+        {
+            this.PlayerId = id;
         }
     }
 
@@ -183,8 +194,14 @@ namespace Rabbit.World
             if (!player.HasCompteur)
             {
                 var pos = player.Pos;
-                var compteur = this.Compteurs.FindIndex(cp => cp.Pos == pos);
-                player.UpdateCompteur(compteur);
+                var compteurId = this.Compteurs.FindIndex(cp => cp.Pos == pos);
+                player.UpdateCompteur(compteurId);
+                if (compteurId != -1)
+                {
+                    var compteur = this.Compteurs[compteurId];
+                    compteur.UpdatePlayer(player.Id);
+                    this.Compteurs[compteurId] = compteur;
+                }
             }
         }
 
@@ -199,7 +216,7 @@ namespace Rabbit.World
 
             if (this.IsValidMove(iplayer, npos))
             {
-                var nplayer = new Player(npos.X, npos.Y, player.Score, PlayerState.Playing);
+                var nplayer = new Player(player.Id, npos.X, npos.Y, player.Score, PlayerState.Playing);
                 if (player.HasCompteur)
                 {
                     ncompteurs[player.CompteurId] = new Compteur(npos.X, npos.Y);
@@ -213,7 +230,7 @@ namespace Rabbit.World
             }
             else
             {
-                nplayers[iplayer] = new Player(player.Pos.X, player.Pos.Y, player.Score, PlayerState.Stunned);
+                nplayers[iplayer] = new Player(iplayer, player.Pos.X, player.Pos.Y, player.Score, PlayerState.Stunned);
             }
             return new WorldState(this.Round, nplayers, ncompteurs, this.Caddies);
         }

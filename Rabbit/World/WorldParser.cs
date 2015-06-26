@@ -99,6 +99,7 @@ namespace Rabbit.World
         private List<Player> ReadPlayers()
         {
             var players = new List<Player>(6);
+            int i = 0;
 
             while (this.Current != ';')
             {
@@ -111,7 +112,8 @@ namespace Rabbit.World
                 int score = this.ReadInt();
                 this.Read(',');
                 PlayerState state = this.ReadState();
-                players.Add(new Player(x, y, score, state));
+                players.Add(new Player(i, x, y, score, state));
+                i += 1;
                 if (this.Current == ':')
                 {
                     this.Read(':');

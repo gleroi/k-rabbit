@@ -32,7 +32,7 @@ namespace Rabbit.Tests.AI
                 directions.Add(dir);
 
                 var next = lastPosition.Move(dir);
-                world.Players[0] = new Player(next.X, next.Y, 0, PlayerState.Playing);
+                world.Players[0] = new Player(0, next.X, next.Y, 0, PlayerState.Playing);
                 lastPosition = next;
                 i++;
             }

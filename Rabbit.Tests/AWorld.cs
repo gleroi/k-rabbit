@@ -25,7 +25,8 @@ namespace Rabbit.Tests
 
         public static WorldState WithPlayer(this WorldState world, int x, int y)
         {
-            world.Players.Add(new Player(x, y, 0, PlayerState.Playing));
+            var id = world.Players.Count;
+            world.Players.Add(new Player(id, x, y, 0, PlayerState.Playing));
             return world;
         }
 
