@@ -16,10 +16,7 @@ namespace Rabbit.AI
         protected Ai(int id)
         {
             this.Id = id;
-            this.NextAi = () => this;
         }
-
-        public Func<Ai> NextAi { get; protected set; }
 
         protected WorldState[] GenerateForPlayer(WorldState world, int playerId)
         {

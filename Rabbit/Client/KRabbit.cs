@@ -61,10 +61,7 @@ namespace Rabbit.Client
                 direction = (Direction) this.random.Next(0, 4);
                 Log.Error("Player {0} decides randomly {1}", this.Id, direction);
             }
-            finally
-            {
-                this.Ai = this.Ai.NextAi();
-            }
+
             watch.Stop();
 
             this.Client.SendMove(world.Round, direction);
