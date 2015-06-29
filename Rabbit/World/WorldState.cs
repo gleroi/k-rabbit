@@ -152,6 +152,10 @@ namespace Rabbit.World
         public const int MAP_WIDTH = 16;
         public const int MAP_HEIGHT = 13;
 
+        public int RemainingRounds
+        {
+            get { return 51 - this.Round; }
+        }
 
         private WorldState(int round, List<Player> players, List<Compteur> compteurs, List<Caddy> caddies)
         {
