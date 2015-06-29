@@ -4,17 +4,28 @@ using System.Linq;
 
 namespace Rabbit.World
 {
-    internal class DistancePointComparer : IComparer<Tuple<int, Point>>
+    internal struct StarPoint : IComparable<StarPoint>
     {
-        public int Compare(Tuple<int, Point> x, Tuple<int, Point> y)
+        public readonly int Estimation;
+        public readonly Point Position;
+        public readonly int Cost;
+
+        public StarPoint(int estimation, Point p, int cost)
         {
-            var dist = x.Item1.CompareTo(y.Item1);
+            this.Estimation = estimation;
+            this.Position = p;
+            this.Cost = cost;
+        }
+
+        public int CompareTo(StarPoint other)
+        {
+            var dist = this.Estimation.CompareTo(other.Estimation);
             if (dist == 0)
             {
-                var a = x.Item2.X.CompareTo(y.Item2.X);
+                var a = this.Position.X.CompareTo(other.Position.X);
                 if (a == 0)
                 {
-                    return x.Item2.Y.CompareTo(y.Item2.Y);
+                    return this.Position.Y.CompareTo(other.Position.Y);
                 }
                 return a;
             }
@@ -86,10 +97,11 @@ namespace Rabbit.World
             }
         }
 
-        private Tuple<int, Point> Tpl(Point p, Point origin, Tuple<int, Point> prev)
+        private StarPoint CreatePoint(Point p, Point origin, StarPoint prev)
         {
-            var prevDist = prev.Item1 - origin.Dist(prev.Item2);
-            return new Tuple<int, Point>(prevDist + this.Data[p.X, p.Y] + origin.Dist(p), p);
+            var cost = prev.Cost + this.Data[p.X, p.Y];
+            var estimation = cost + origin.Dist(p);
+            return new StarPoint(estimation, p, cost);
         }
 
         public Direction? MoveTo(Point from, Point to)
@@ -97,11 +109,10 @@ namespace Rabbit.World
             var depart = new Point(from.X + 1, from.Y + 1);
             var destination = new Point(to.X + 1, to.Y + 1);
 
-            var comparer = new DistancePointComparer();
-            Dictionary<Point, Tuple<int, Point>> cameFrom = new Dictionary<Point, Tuple<int, Point>>();
-            SortedSet<Tuple<int, Point>> toBeTreated = new SortedSet<Tuple<int, Point>>(comparer);
-            SortedSet<Tuple<int, Point>> visited = new SortedSet<Tuple<int, Point>>(comparer);
-            toBeTreated.Add(this.Tpl(destination, destination, new Tuple<int, Point>(0, destination)));
+            Dictionary<Point, StarPoint> cameFrom = new Dictionary<Point, StarPoint>();
+            SortedSet<StarPoint> toBeTreated = new SortedSet<StarPoint>();
+            SortedSet<StarPoint> visited = new SortedSet<StarPoint>();
+            toBeTreated.Add(this.CreatePoint(destination, destination, new StarPoint(0, destination, 0)));
 
             while (toBeTreated.Count > 0)
             {
@@ -109,9 +120,9 @@ namespace Rabbit.World
                 toBeTreated.Remove(node);
                 visited.Add(node);
 
-                if (node.Item2 == depart)
+                if (node.Position == depart)
                 {
-                    return this.ReconstructPath(cameFrom, depart, destination);
+                    return this.ReconstructPath(cameFrom, depart);
                 }
 
                 this.AddNext(toBeTreated, visited, cameFrom, node, destination, Direction.N);
@@ -123,10 +134,10 @@ namespace Rabbit.World
         }
 
         private Direction? ReconstructPath(
-            Dictionary<Point, Tuple<int, Point>> cameFrom, Point depart, Point destination)
+            Dictionary<Point, StarPoint> cameFrom, Point depart)
         {
             Point current = depart;
-            Point prev = cameFrom[depart].Item2;
+            Point prev = cameFrom[depart].Position;
 
             if (prev.X - current.X > 0)
             {
@@ -147,40 +158,39 @@ namespace Rabbit.World
             return null;
         }
 
-        private bool HasBest(SortedSet<Tuple<int, Point>> visited, Tuple<int, Point> node, Point destination)
+        private bool HasBest(SortedSet<StarPoint> set, StarPoint node)
         {
-            var currentDist = node.Item1 - destination.Dist(node.Item2);
-            return visited.Any(n => n.Item2 == node.Item2
-                                    && (node.Item1 - destination.Dist(node.Item2)) <= currentDist);
+            var currentDist = node.Cost;
+            return set.Any(n => n.Position == node.Position && n.Cost <= currentDist);
         }
 
         private void AddIfBest(
-            SortedSet<Tuple<int, Point>> set, Dictionary<Point, Tuple<int, Point>> cameFrom,
-            Tuple<int, Point> node, Tuple<int, Point> source, Point destination)
+            SortedSet<StarPoint> set, Dictionary<Point, StarPoint> cameFrom,
+            StarPoint node, StarPoint source)
         {
-            if (!this.HasBest(set, node, destination))
+            if (!this.HasBest(set, node))
             {
-                cameFrom[node.Item2] = source;
+                cameFrom[node.Position] = source;
                 set.Add(node);
             }
         }
 
         private void AddNext(
-            SortedSet<Tuple<int, Point>> toBeTreated, SortedSet<Tuple<int, Point>> visited,
-            Dictionary<Point, Tuple<int, Point>> cameFrom,
-            Tuple<int, Point> node, Point destination, Direction dir)
+            SortedSet<StarPoint> toBeTreated, SortedSet<StarPoint> visited,
+            Dictionary<Point, StarPoint> cameFrom,
+            StarPoint current, Point destination, Direction dir)
         {
-            var pt = node.Item2.Move(dir);
+            var next = current.Position.Move(dir);
 
-            if (!DistanceMap.IsInBound(pt) || this.Data[pt.X, pt.Y] == int.MaxValue)
+            if (!DistanceMap.IsInBound(next) || this.Data[next.X, next.Y] == int.MaxValue)
             {
                 return;
             }
 
-            var tpl = this.Tpl(pt, destination, node);
-            if (!this.HasBest(visited, tpl, destination))
+            var tpl = this.CreatePoint(next, destination, current);
+            if (!this.HasBest(visited, tpl))
             {
-                this.AddIfBest(toBeTreated, cameFrom, tpl, node, destination);
+                this.AddIfBest(toBeTreated, cameFrom, tpl, current);
             }
         }
 

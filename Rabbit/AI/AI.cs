@@ -99,6 +99,10 @@ namespace Rabbit.AI
             var map = new DistanceMap(world, this.Id);
             map.AddRiskBaffeAtCost(costBaffe);
             var direction = map.MoveTo(world.Players[this.Id].Pos, cpos);
+            if (!direction.HasValue)
+            {
+                direction = this.MoveTo(world, cpos, state => !state.HasFlag(CellState.Impossible));
+            }
             return direction.GetValueOrDefault(Direction.E);
         }
 
@@ -164,8 +168,6 @@ namespace Rabbit.AI
             var home = world.Caddies[this.Id].Pos;
             // utiliser un MoveTo ou on se preoccupe de prendre une baffe
             var direction = this.MoveToByShortestPath(world, home, 5);
-            //var direction = this.MoveTo(world, home, 
-            //    state => !state.HasFlag(CellState.Impossible) && !state.HasFlag(CellState.RiskBaffe));
             return direction;
         }
 
@@ -174,8 +176,6 @@ namespace Rabbit.AI
             var cpt = this.FindClosestCompteur(world);
             // utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
             var direction = this.MoveToByShortestPath(world, world.Compteurs[cpt].Pos, 3);
-            //var direction = this.MoveTo(world, world.Compteurs[cpt].Pos, 
-            //    state => !state.HasFlag(CellState.Impossible));
             return direction;
         }
 
