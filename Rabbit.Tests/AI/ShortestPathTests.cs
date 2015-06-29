@@ -7,7 +7,7 @@ namespace Rabbit.Tests.AI
     public class ShortestPathTests
     {
         private static List<Direction> WhenMoving(
-            WorldState world, DistanceMap map, Point depart, Point destination, out Point lastPosition,
+            WorldState world, Point depart, Point destination, out Point lastPosition, int cost = 0,
             int maxIteration = int.MinValue)
         {
             var distance = destination.Dist(depart);
@@ -19,7 +19,10 @@ namespace Rabbit.Tests.AI
             lastPosition = depart;
             while (lastPosition != destination && i < maxIteration)
             {
-                var dir = map.MoveTo(lastPosition, destination);
+                var map = new DistanceMap(world, 0);
+                map.AddRiskBaffeAtCost(cost);
+                map.BuildAllPath();
+                var dir = map.MoveTo(destination);
                 directions.Add(dir.Value);
 
                 var next = lastPosition.Move(dir.Value);
@@ -40,10 +43,9 @@ namespace Rabbit.Tests.AI
             var world = AWorld.GivenWorld()
                 .WithPlayer(5, 5);
 
-            var map = new DistanceMap(world, 0);
-
-            var direction = map.MoveTo(new Point(5, 5), new Point(x, y));
-            Assert.Equal(expectedDirection, direction);
+            Point lastPosition;
+            List<Direction> directions = WhenMoving(world, new Point(5,5), new Point(x, y), out lastPosition);
+            Assert.Equal(new List<Direction> {expectedDirection}, directions);
         }
 
         [Fact]
@@ -52,11 +54,10 @@ namespace Rabbit.Tests.AI
             var depart = new Point(5, 5);
             var world = AWorld.GivenWorld()
                 .WithPlayer(depart.X, depart.Y);
-            var map = new DistanceMap(world, 0);
             
             var destination = new Point(10, 3);
             Point lastPosition;
-            List<Direction> directions = WhenMoving(world, map, depart, destination, out lastPosition);
+            List<Direction> directions = WhenMoving(world, depart, destination, out lastPosition);
 
             Assert.Equal(destination, lastPosition);
             Assert.Equal(new[]
@@ -73,11 +74,10 @@ namespace Rabbit.Tests.AI
             var depart = new Point(5, 5);
             var world = AWorld.GivenWorld()
                 .WithPlayer(depart.X, depart.Y);
-            var map = new DistanceMap(world, 0);
 
             var destination = new Point(0, 7);
             Point lastPosition;
-            List<Direction> directions = WhenMoving(world, map, depart, destination, out lastPosition);
+            List<Direction> directions = WhenMoving(world, depart, destination, out lastPosition);
 
             Assert.Equal(destination, lastPosition);
             Assert.Equal(new[]
@@ -85,7 +85,7 @@ namespace Rabbit.Tests.AI
                 Direction.O, Direction.O, Direction.O, Direction.O, Direction.O,
                 Direction.S, Direction.S,
             },
-                         directions);
+            directions);
         }
 
         [Fact]
@@ -97,18 +97,17 @@ namespace Rabbit.Tests.AI
                 .WithPlayer(depart.X, depart.Y)
                 .WithPlayer(obstacle.X, obstacle.Y);
             var map = new DistanceMap(world, 0);
-            map.AddRiskBaffeAtCost(4);
+            map.AddRiskBaffeAtCost(3);
 
             var destination = new Point(11, 5);
             Point lastPosition;
-            List<Direction> directions = WhenMoving(world, map, depart, destination, out lastPosition, 20);
+            List<Direction> directions = WhenMoving(world, depart, destination, out lastPosition, 3, 20);
 
             Assert.Equal(destination, lastPosition);
             Assert.Equal(new[]
             {
-                Direction.N, Direction.E,
-                Direction.N, Direction.E,
-                Direction.N, Direction.E, Direction.E,
+                Direction.N, Direction.N, Direction.N, 
+                Direction.E, Direction.E, Direction.E, Direction.E,
                 Direction.S, Direction.E,
                 Direction.S, Direction.E, 
                 Direction.S

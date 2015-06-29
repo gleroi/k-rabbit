@@ -17,6 +17,7 @@ namespace Rabbit.Tests.AI
                 .WithPlayer(1, 6);
             var ai = new GoCompteur(0);
 
+            ai.Decide(world);
             var idCompteur = ai.FindClosestCompteur(world);
             Assert.Equal(expectedCompteur, idCompteur);
         }
@@ -34,6 +35,7 @@ namespace Rabbit.Tests.AI
                 .WithCompteur(x2, y2);
 
             var ai = new GoCompteur(0);
+            ai.Decide(world);
             Assert.Equal(expectedCompteur, ai.FindClosestCompteur(world));
         }
     }

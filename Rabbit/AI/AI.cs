@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Rabbit.World;
 
 namespace Rabbit.AI
@@ -12,28 +13,18 @@ namespace Rabbit.AI
     {
         protected readonly int Id;
         protected Map Map;
+        protected DistanceMap Distances;
 
         protected Ai(int id)
         {
             this.Id = id;
         }
 
-        protected WorldState[] GenerateForPlayer(WorldState world, int playerId)
-        {
-            WorldState[] states = new WorldState[4];
-
-            states[0] = world.ApplyAction(playerId, Direction.N);
-            states[1] = world.ApplyAction(playerId, Direction.S);
-            states[2] = world.ApplyAction(playerId, Direction.E);
-            states[3] = world.ApplyAction(playerId, Direction.O);
-            return states;
-        }
-
         internal int FindClosestCompteur(WorldState world)
         {
             var players = world.Players;
             var compteurs = world.Compteurs;
-            var distances = Ai.PlayerCompteurDistances(compteurs, players);
+            var distances = this.PlayerCompteurDistances(compteurs, players);
 
             var myCpt = this.ClosestCompteur(world, distances, this.Id, cpt => !cpt.IsOwned);
             if (myCpt == -1)
@@ -73,7 +64,7 @@ namespace Rabbit.AI
             return myCpt;
         }
 
-        private static List<Tuple<int, int>>[] PlayerCompteurDistances(List<Compteur> compteurs, List<Player> players)
+        private List<Tuple<int, int>>[] PlayerCompteurDistances(List<Compteur> compteurs, List<Player> players)
         {
             List<Tuple<int, int>>[] distances = new List<Tuple<int, int>>[compteurs.Count];
 
@@ -85,7 +76,15 @@ namespace Rabbit.AI
                 for (var p = 0; p < players.Count; p++)
                 {
                     var player = players[p];
-                    var dist = compteur.Pos.Dist(player.Pos);
+                    int dist = 0;
+                    if (p == this.Id)
+                    {
+                        dist = this.Distances.Cost(compteur.Pos);
+                    }
+                    else
+                    {
+                        dist = player.Pos.Dist(compteur.Pos);
+                    }
                     cptDist.Add(new Tuple<int, int>(dist, p));
                 }
                 cptDist.Sort();
@@ -94,11 +93,10 @@ namespace Rabbit.AI
             return distances;
         }
 
-        public Direction MoveToByShortestPath(WorldState world, Point cpos, int costBaffe)
+        public Direction MoveToByShortestPath(WorldState world, Point cpos)
         {
-            var map = new DistanceMap(world, this.Id);
-            map.AddRiskBaffeAtCost(costBaffe);
-            var direction = map.MoveTo(world.Players[this.Id].Pos, cpos);
+            var direction = this.Distances.MoveTo(cpos);
+
             if (!direction.HasValue)
             {
                 direction = this.MoveTo(world, cpos, state => !state.HasFlag(CellState.Impossible));
@@ -165,23 +163,31 @@ namespace Rabbit.AI
 
         public Direction GoHome(WorldState world)
         {
-            var home = world.Caddies[this.Id].Pos;
             // utiliser un MoveTo ou on se preoccupe de prendre une baffe
-            var direction = this.MoveToByShortestPath(world, home, 5);
+            this.Distances.AddRiskBaffeAtCost(3);
+            this.Distances.BuildAllPath();
+
+            var home = world.Caddies[this.Id].Pos;
+            var direction = this.MoveToByShortestPath(world, home);
             return direction;
         }
 
         public Direction GoClosestCompteur(WorldState world)
         {
-            var cpt = this.FindClosestCompteur(world);
             // utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
-            var direction = this.MoveToByShortestPath(world, world.Compteurs[cpt].Pos, 3);
+            this.Distances.AddRiskBaffeAtCost(2);
+            this.Distances.BuildAllPath();
+
+            var cpt = this.FindClosestCompteur(world);
+            var direction = this.MoveToByShortestPath(world, world.Compteurs[cpt].Pos);
             return direction;
         }
 
         public Direction Decide(WorldState world)
         {
             this.Map = new Map(world, this.Id);
+            this.Distances = new DistanceMap(world, this.Id);
+
             return this.InnerDecide(world);
         }
 

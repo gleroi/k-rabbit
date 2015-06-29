@@ -42,11 +42,15 @@ namespace Rabbit.World
         private readonly int Me;
 
         private readonly WorldState World;
+        private Dictionary<Point, StarPoint> cameFrom;
+        private readonly Point depart;
 
         public DistanceMap(WorldState world, int me)
         {
             this.World = world;
             this.Me = me;
+            var mePt = this.World.Players[this.Me].Pos;
+            this.depart = new Point(mePt.X + 1, mePt.Y + 1);
             this.BuildDistanceMap();
         }
 
@@ -104,15 +108,12 @@ namespace Rabbit.World
             return new StarPoint(estimation, p, cost);
         }
 
-        public Direction? MoveTo(Point from, Point to)
+        public void BuildAllPath()
         {
-            var depart = new Point(from.X + 1, from.Y + 1);
-            var destination = new Point(to.X + 1, to.Y + 1);
-
-            Dictionary<Point, StarPoint> cameFrom = new Dictionary<Point, StarPoint>();
+            this.cameFrom = new Dictionary<Point, StarPoint>();
             SortedSet<StarPoint> toBeTreated = new SortedSet<StarPoint>();
             SortedSet<StarPoint> visited = new SortedSet<StarPoint>();
-            toBeTreated.Add(this.CreatePoint(destination, destination, new StarPoint(0, destination, 0)));
+            toBeTreated.Add(this.CreatePoint(this.depart, this.depart, new StarPoint(0, this.depart, 0)));
 
             while (toBeTreated.Count > 0)
             {
@@ -120,38 +121,42 @@ namespace Rabbit.World
                 toBeTreated.Remove(node);
                 visited.Add(node);
 
-                if (node.Position == depart)
-                {
-                    return this.ReconstructPath(cameFrom, depart);
-                }
-
-                this.AddNext(toBeTreated, visited, cameFrom, node, destination, Direction.N);
-                this.AddNext(toBeTreated, visited, cameFrom, node, destination, Direction.E);
-                this.AddNext(toBeTreated, visited, cameFrom, node, destination, Direction.S);
-                this.AddNext(toBeTreated, visited, cameFrom, node, destination, Direction.O);
+                this.AddNext(toBeTreated, visited, this.cameFrom, node, this.depart, Direction.N);
+                this.AddNext(toBeTreated, visited, this.cameFrom, node, this.depart, Direction.E);
+                this.AddNext(toBeTreated, visited, this.cameFrom, node, this.depart, Direction.S);
+                this.AddNext(toBeTreated, visited, this.cameFrom, node, this.depart, Direction.O);
             }
-            return null;
         }
 
-        private Direction? ReconstructPath(
-            Dictionary<Point, StarPoint> cameFrom, Point depart)
+        public int Cost(Point destination)
         {
-            Point current = depart;
-            Point prev = cameFrom[depart].Position;
+            Point current = new Point(destination.X + 1, destination.Y + 1);
+            return this.cameFrom[current].Cost;
+        }
 
-            if (prev.X - current.X > 0)
+        public Direction? MoveTo(Point destination)
+        {
+            Point current = new Point(destination.X + 1, destination.Y + 1);
+            Point next = current;
+            while (current != this.depart)
+            {
+                next = current;
+                current = this.cameFrom[current].Position;
+            }
+
+            if (next.X - current.X > 0)
             {
                 return Direction.E;
             }
-            if (prev.X - current.X < 0)
+            if (next.X - current.X < 0)
             {
                 return Direction.O;
             }
-            if (prev.Y - current.Y > 0)
+            if (next.Y - current.Y > 0)
             {
                 return Direction.S;
             }
-            if (prev.Y - current.Y < 0)
+            if (next.Y - current.Y < 0)
             {
                 return Direction.N;
             }
