@@ -35,11 +35,6 @@ namespace Rabbit.AI
             {
                 return this.GoHome;
             }
-            //var home = world.Caddies[this.Id].Pos;
-            //if (me.Pos == home)
-            //{
-            //    return this.GoClosestCompteur;
-            //}
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Rabbit.Client
                         return;
                     case MessageType.InscriptionOk:
                         break;
-                    case MessageType.WorkState:
+                    case MessageType.WorldState:
                         this.HandleWorldState(msg);
                         break;
                 }

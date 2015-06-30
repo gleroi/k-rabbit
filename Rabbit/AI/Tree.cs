@@ -6,7 +6,8 @@ namespace Rabbit.AI
 {
     class Tree
     {
-        WorldState State;
+        private int[] PlayerScores;
+        private int CurrentPlayer;
 
         Tree North;
         Tree South;
@@ -17,25 +18,36 @@ namespace Rabbit.AI
         {
             if (this.North == null) 
             {
-                var player = this.State.Players[iplayer];
-                var score = player.Score;
-                if (player.HasCompteur)
-                {
-                    score += OWN_COMPTEUR_BONUS;
-                }
+                var score = this.PlayerScores[iplayer];
                 return score;
             }
-            return Math.Max(this.North.MetaScore(iplayer), 
-                Math.Max(this.South.MetaScore(iplayer),
-                Math.Max(this.East.MetaScore(iplayer), this.West.MetaScore(iplayer))));
+            if (iplayer == this.CurrentPlayer)
+            {
+                return Math.Max(this.North.MetaScore(iplayer),
+                       Math.Max(this.South.MetaScore(iplayer),
+                       Math.Max(this.East.MetaScore(iplayer), this.West.MetaScore(iplayer))));
+            }
+            else
+            {
+                return Math.Min(this.North.MetaScore(iplayer),
+                       Math.Min(this.South.MetaScore(iplayer),
+                       Math.Min(this.East.MetaScore(iplayer), this.West.MetaScore(iplayer))));
+            }
         }
 
         public static Tree Generate(WorldState state, int iplayer, int depth = 5)
         {
+            var nbPlayers = state.Players.Count;
             Tree tree = new Tree()
             {
-                State = state,
+                PlayerScores = new int[nbPlayers],
+                CurrentPlayer = iplayer
             };
+
+            for (int i = 0; i < nbPlayers; i++)
+            {
+                tree.PlayerScores[i] = state.Players[i].Score;
+            }
 
             var player = state.Players[iplayer];
 
@@ -49,7 +61,5 @@ namespace Rabbit.AI
             }
             return tree;
         }
-
-        const int OWN_COMPTEUR_BONUS = 15;
     }
 }

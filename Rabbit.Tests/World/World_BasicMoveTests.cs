@@ -68,7 +68,7 @@ namespace Rabbit.Tests.World
             var world = AWorld.WithOnePlayerAt(0, 0);
 
             var newWorld = world.ApplyAction(0, Direction.N);
-            APlayer.Is(newWorld.Players[0], 0, 0, 0, PlayerState.Stunned);
+            APlayer.Is(newWorld.Players[0], 0, 0, -5, PlayerState.Stunned);
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace Rabbit.Tests.World
             var world = AWorld.WithOnePlayerAt(0, 0);
 
             var newWorld = world.ApplyAction(0, Direction.O);
-            APlayer.Is(newWorld.Players[0], 0, 0, 0, PlayerState.Stunned);
+            APlayer.Is(newWorld.Players[0], 0, 0, -5, PlayerState.Stunned);
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace Rabbit.Tests.World
             var world = AWorld.WithOnePlayerAt(WorldState.MAP_WIDTH - 1, WorldState.MAP_HEIGHT - 1);
 
             var newWorld = world.ApplyAction(0, Direction.S);
-            APlayer.Is(newWorld.Players[0], WorldState.MAP_WIDTH - 1, WorldState.MAP_HEIGHT - 1, 0, PlayerState.Stunned);
+            APlayer.Is(newWorld.Players[0], WorldState.MAP_WIDTH - 1, WorldState.MAP_HEIGHT - 1, -5, PlayerState.Stunned);
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace Rabbit.Tests.World
             var world = AWorld.WithOnePlayerAt(WorldState.MAP_WIDTH - 1, WorldState.MAP_HEIGHT - 1);
 
             var newWorld = world.ApplyAction(0, Direction.E);
-            APlayer.Is(newWorld.Players[0], WorldState.MAP_WIDTH - 1, WorldState.MAP_HEIGHT - 1, 0, PlayerState.Stunned);
+            APlayer.Is(newWorld.Players[0], WorldState.MAP_WIDTH - 1, WorldState.MAP_HEIGHT - 1, -5, PlayerState.Stunned);
         }
     }
 }

@@ -212,7 +212,7 @@ namespace Rabbit.AI
         public Direction GoHome(WorldState world)
         {
             // utiliser un MoveTo ou on se preoccupe de prendre une baffe
-            this.Distances.AddRiskBaffeAtCost(3);
+            this.Distances = new DistanceMap(world, this.Id, 3);
             this.Distances.BuildAllPath();
 
             var home = world.Caddies[this.Id].Pos;
@@ -223,16 +223,17 @@ namespace Rabbit.AI
         public Direction GoClosestCompteur(WorldState world)
         {
             // utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
-            var cpt = this.GetClosestCompteurDist(world);
-          
+            this.Distances = new DistanceMap(world, this.Id, 2);
+            this.Distances.BuildAllPath();
+
+            var cpt = this.FindClosestCompteur(world);
             var direction = this.MoveToByShortestPath(world, world.Compteurs[cpt].Pos);
             return direction;
         }
 
         public int GetClosestCompteurDist(WorldState world)
         {
-            // utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
-            this.Distances.AddRiskBaffeAtCost(2);
+            this.Distances = new DistanceMap(world, this.Id, 2);
             this.Distances.BuildAllPath();
 
             return this.FindClosestCompteur(world);
@@ -241,8 +242,6 @@ namespace Rabbit.AI
         public Direction Decide(WorldState world)
         {
             this.Map = new Map(world, this.Id);
-            this.Distances = new DistanceMap(world, this.Id);
-
             return this.InnerDecide(world);
         }
 

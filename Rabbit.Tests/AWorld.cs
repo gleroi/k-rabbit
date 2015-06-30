@@ -27,6 +27,7 @@ namespace Rabbit.Tests
         {
             var id = world.Players.Count;
             world.Players.Add(new Player(id, x, y, 0, PlayerState.Playing));
+            world.Caddies.Add(new Caddy(x, y));
             return world;
         }
 

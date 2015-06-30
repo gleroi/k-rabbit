@@ -75,8 +75,6 @@ namespace Rabbit.Client
 
         public void SendMove(int round, Direction direction)
         {
-            Log.Debug("Sending move");
-
             var msg = GetMoveMessage(round, direction);
 
             Log.Debug("Move is " + msg);

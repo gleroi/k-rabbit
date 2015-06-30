@@ -9,7 +9,7 @@ namespace Rabbit.Client
     {
         InscriptionOk,
         InscriptionKo,
-        WorkState,
+        WorldState,
         GameOver,
         ActionOk,
         ActionKo

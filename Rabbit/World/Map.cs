@@ -99,7 +99,7 @@ namespace Rabbit.World
             }
         }
 
-        public static Point[] PointsAround(Point player)
+        private static Point[] PointsAround(Point player)
         {
             int x = player.X + 1;
             int y = player.Y + 1;

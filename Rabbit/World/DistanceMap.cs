@@ -9,12 +9,14 @@ namespace Rabbit.World
         public readonly int Estimation;
         public readonly Point Position;
         public readonly int Cost;
+        public readonly int Score;
 
-        public StarPoint(int estimation, Point p, int cost)
+        public StarPoint(int estimation, Point p, int cost, int score)
         {
             this.Estimation = estimation;
             this.Position = p;
             this.Cost = cost;
+            this.Score = score;
         }
 
         public int CompareTo(StarPoint other)
@@ -22,57 +24,91 @@ namespace Rabbit.World
             var dist = this.Estimation.CompareTo(other.Estimation);
             if (dist == 0)
             {
-                var a = this.Position.X.CompareTo(other.Position.X);
-                if (a == 0)
+                var s = -this.Score.CompareTo(other.Score);
+                if (s == 0)
                 {
-                    return this.Position.Y.CompareTo(other.Position.Y);
+                    var a = this.Position.X.CompareTo(other.Position.X);
+                    if (a == 0)
+                    {
+                        return this.Position.Y.CompareTo(other.Position.Y);
+                    }
+                    return a;
                 }
-                return a;
+                return s;
             }
             return dist;
         }
     }
 
+    struct MapCell
+    {
+        public int Cost;
+        public int Score;
+
+        public MapCell(int cost, int score)
+        {
+            this.Cost = cost;
+            this.Score = score;
+        } 
+    }
+
     internal class DistanceMap
     {
-        private const int MAP_HEIGHT = WorldState.MAP_HEIGHT + 2;
-        private const int MAP_WIDTH = WorldState.MAP_WIDTH + 2;
+        private const int MAP_HEIGHT = WorldState.MAP_HEIGHT;
+        private const int MAP_WIDTH = WorldState.MAP_WIDTH;
 
-        private readonly int[,] Data = new int[DistanceMap.MAP_WIDTH, DistanceMap.MAP_HEIGHT];
+        private readonly MapCell[,] Data = new MapCell[DistanceMap.MAP_WIDTH, DistanceMap.MAP_HEIGHT];
         private readonly int Me;
 
         private readonly WorldState World;
         private Dictionary<Point, StarPoint> cameFrom;
         private readonly Point depart;
 
-        public DistanceMap(WorldState world, int me)
+        private const int BAFFE_SCORE = 2;
+        private const int COMPTEUR_RAMASSE = 1;
+        private const int INVALID_MOVE = -5;
+
+        public DistanceMap(WorldState world, int me, int baffe)
         {
             this.World = world;
             this.Me = me;
             var mePt = this.World.Players[this.Me].Pos;
-            this.depart = new Point(mePt.X + 1, mePt.Y + 1);
+            this.depart = new Point(mePt.X, mePt.Y);
             this.BuildDistanceMap();
+            this.AddRiskBaffeAtCost(baffe);
         }
 
         private void BuildDistanceMap()
         {
-            for (int x = 0; x < DistanceMap.MAP_WIDTH; x++)
-            {
-                this.Data[x, 0] = int.MaxValue;
-                this.Data[x, DistanceMap.MAP_HEIGHT - 1] = int.MaxValue;
-            }
             for (int y = 0; y < DistanceMap.MAP_HEIGHT; y++)
             {
-                this.Data[0, y] = int.MaxValue;
-                this.Data[DistanceMap.MAP_WIDTH - 1, y] = int.MaxValue;
-            }
-
-            for (int y = 1; y < DistanceMap.MAP_HEIGHT - 1; y++)
-            {
-                for (int x = 1; x < DistanceMap.MAP_WIDTH - 1; x++)
+                for (int x = 0; x < DistanceMap.MAP_WIDTH; x++)
                 {
-                    this.Data[x, y] = 1;
+                    this.Data[x, y] = new MapCell(1, 0);
                 }
+            }
+            for (int p = 0; p < this.World.Players.Count; p++)
+            {
+                if (p != this.Me)
+                {
+                    var player = this.World.Players[p].Pos;
+                    var home = this.World.Caddies[p].Pos;
+                    this.Data[player.X, player.Y] = new MapCell(5000, INVALID_MOVE);
+                    if (player != home)
+                    {
+                        var adjacents = player.Adjacents();
+                        foreach (var adj in adjacents)
+                        {
+                            var cell = this.Data[adj.X, adj.Y];
+                            this.Data[adj.X, adj.Y] = new MapCell(cell.Cost, cell.Score + BAFFE_SCORE);
+                        }
+                    }
+                }
+            }
+            for (int c = 0; c < this.World.Compteurs.Count; c++)
+            {
+                var cpt = this.World.Compteurs[c].Pos;
+                this.Data[cpt.X, cpt.Y] = new MapCell(1, 1);
             }
         }
 
@@ -84,17 +120,13 @@ namespace Rabbit.World
                 if (p != this.Me)
                 {
                     var player = this.World.Players[p].Pos;
-                    this.Data[player.X + 1, player.Y + 1] = int.MaxValue;
-                    var arounds = Map.PointsAround(player);
+                    var arounds = player.Around();
                     foreach (var pos in arounds)
                     {
-                        if (DistanceMap.IsInBound(pos))
+                        if (this.IsInBound(pos))
                         {
                             var val = this.Data[pos.X, pos.Y];
-                            if (val < int.MaxValue)
-                            {
-                                this.Data[pos.X, pos.Y] = val + cost;
-                            }
+                            this.Data[pos.X, pos.Y] = new MapCell(val.Cost + cost, val.Score);
                         }
                     }
                 }
@@ -103,9 +135,10 @@ namespace Rabbit.World
 
         private StarPoint CreatePoint(Point p, Point origin, StarPoint prev)
         {
-            var cost = prev.Cost + this.Data[p.X, p.Y];
+            var cell = this.Data[p.X, p.Y];
+            var cost = prev.Cost + cell.Cost;
             var estimation = cost + origin.Dist(p);
-            return new StarPoint(estimation, p, cost);
+            return new StarPoint(estimation, p, cost, prev.Score + cell.Score);
         }
 
         public void BuildAllPath()
@@ -113,7 +146,7 @@ namespace Rabbit.World
             this.cameFrom = new Dictionary<Point, StarPoint>();
             SortedSet<StarPoint> toBeTreated = new SortedSet<StarPoint>();
             SortedSet<StarPoint> visited = new SortedSet<StarPoint>();
-            toBeTreated.Add(this.CreatePoint(this.depart, this.depart, new StarPoint(0, this.depart, 0)));
+            toBeTreated.Add(this.CreatePoint(this.depart, this.depart, new StarPoint(0, this.depart, 0, 0)));
 
             while (toBeTreated.Count > 0)
             {
@@ -130,20 +163,30 @@ namespace Rabbit.World
 
         public int Cost(Point destination)
         {
-            Point current = new Point(destination.X + 1, destination.Y + 1);
-            return this.cameFrom[current].Cost;
+            return this.cameFrom[destination].Cost;
         }
 
         public Direction? MoveTo(Point destination)
         {
-            Point current = new Point(destination.X + 1, destination.Y + 1);
+            Point current = new Point(destination.X, destination.Y);
             Point next = current;
+            List<Direction?> directions = new List<Direction?>();
             while (current != this.depart)
             {
                 next = current;
                 current = this.cameFrom[current].Position;
+                directions.Add(GetDirection(next, current));
             }
 
+            Log.Info("Player {0} going to {1} selected path: {2}, score {3}", this.Me, destination.ToString(), 
+                String.Join(",", directions.Select(d => d.ToString()).Reverse()),
+                this.cameFrom[destination].Score);
+
+            return DistanceMap.GetDirection(next, current);
+        }
+
+        private static Direction? GetDirection(Point next, Point current)
+        {
             if (next.X - current.X > 0)
             {
                 return Direction.E;
@@ -187,7 +230,7 @@ namespace Rabbit.World
         {
             var next = current.Position.Move(dir);
 
-            if (!DistanceMap.IsInBound(next) || this.Data[next.X, next.Y] == int.MaxValue)
+            if (!this.IsInBound(next))
             {
                 return;
             }
@@ -199,9 +242,10 @@ namespace Rabbit.World
             }
         }
 
-        private static bool IsInBound(Point pt)
+        private bool IsInBound(Point pt)
         {
-            return !(pt.X < 0 || pt.Y < 0 || pt.X >= DistanceMap.MAP_WIDTH || pt.Y >= DistanceMap.MAP_HEIGHT);
+            return !(pt.X < 0 || pt.Y < 0
+                || pt.X >= DistanceMap.MAP_WIDTH || pt.Y >= DistanceMap.MAP_HEIGHT);
         }
     }
 }

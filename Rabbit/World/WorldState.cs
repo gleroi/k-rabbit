@@ -48,6 +48,32 @@ namespace Rabbit.World
             }
         }
 
+        internal Point[] Around()
+        {
+            var result = new Point[8];
+
+            result[0] = new Point(this.X + 2, this.Y);
+            result[1] = new Point(this.X + 1, this.Y + 1);
+            result[2] = new Point(this.X, this.Y + 2);
+            result[3] = new Point(this.X - 1, this.Y + 1);
+            result[4] = new Point(this.X - 2, this.Y);
+            result[5] = new Point(this.X - 1, this.Y - 1);
+            result[6] = new Point(this.X, this.Y - 2);
+            result[7] = new Point(this.X + 1, this.Y - 1);
+            return result;
+        }
+
+        internal Point[] Adjacents()
+        {
+            var result = new Point[4];
+
+            result[0] = new Point(this.X, this.Y - 1);
+            result[1] = new Point(this.X, this.Y + 1);
+            result[2] = new Point(this.X + 1, this.Y);
+            result[3] = new Point(this.X - 1, this.Y);
+            return result;
+        }
+        
         /// <summary>
         /// Manhattan distance
         /// </summary>
@@ -64,12 +90,17 @@ namespace Rabbit.World
         {
             return Math.Sqrt(Square(p.X - this.X) + Square(p.Y - this.Y));
         }
+
+        public override string ToString()
+        {
+            return "(" + this.X + ", " + this.Y + ")";
+        }
     }
 
     internal struct Player
     {
         public readonly Point Pos;
-        public readonly int Score;
+        public int Score { get; private set; }
         public readonly PlayerState State;
         public readonly int Id;
 
@@ -102,6 +133,11 @@ namespace Rabbit.World
             this.Caddy = caddy;
         }
 
+
+        internal void IncreaseScore(int inc)
+        {
+            this.Score += inc;
+        }
     }
 
     internal struct Compteur
@@ -221,20 +257,37 @@ namespace Rabbit.World
             if (this.IsValidMove(iplayer, npos))
             {
                 var nplayer = new Player(player.Id, npos.X, npos.Y, player.Score, PlayerState.Playing);
+                // compteur
                 if (player.HasCompteur)
                 {
-                    ncompteurs[player.CompteurId] = new Compteur(npos.X, npos.Y);
-                    nplayer.UpdateCompteur(player.CompteurId);
+                    var home = this.Caddies[iplayer];
+                    if (nplayer.Pos == home.Pos)
+                    {
+                        nplayer.IncreaseScore(30);
+                        ncompteurs.Remove(ncompteurs[player.CompteurId]);
+                        this.CheckCompteur(ref nplayer);
+                    }
+                    else
+                    {
+                        ncompteurs[player.CompteurId] = new Compteur(npos.X, npos.Y);
+                        nplayer.UpdateCompteur(player.CompteurId);
+                    }
                 }
                 else
                 {
                     this.CheckCompteur(ref nplayer);
+                    if (nplayer.HasCompteur)
+                    {
+                        nplayer.IncreaseScore(1);
+                    }
                 }
+                // baffe
+
                 nplayers[iplayer] = nplayer;
             }
             else
             {
-                nplayers[iplayer] = new Player(iplayer, player.Pos.X, player.Pos.Y, player.Score, PlayerState.Stunned);
+                nplayers[iplayer] = new Player(iplayer, player.Pos.X, player.Pos.Y, player.Score - 5, PlayerState.Stunned);
             }
             return new WorldState(this.Round, nplayers, ncompteurs, this.Caddies);
         }

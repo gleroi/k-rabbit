@@ -17,7 +17,7 @@ namespace Rabbit.Tests.World
 
             var nworld = world.ApplyAction(0, direction);
 
-            APlayer.Is(nworld.Players[0], 9, 9, 0, PlayerState.Playing);
+            APlayer.Is(nworld.Players[0], 9, 9, 1, PlayerState.Playing);
             Assert.True(nworld.Players[0].HasCompteur);
         }
 

@@ -36,7 +36,7 @@ namespace Rabbit.Client
 
                 if (data.StartsWith("worldstate::"))
                 {
-                    msg = new Message(MessageType.WorkState, data);
+                    msg = new Message(MessageType.WorldState, data);
                 }
                 else if (data.StartsWith("game over"))
                 {
@@ -110,11 +110,7 @@ namespace Rabbit.Client
             var data = Encoding.ASCII.GetBytes(msg + "\n");
             try
             {
-                Log.Debug("Sending " + data.Length + " bytes");
-
                 int sent = this.server.Send(data);
-
-                Log.Debug("Sended " + sent + " bytes");
             }
             catch (Exception ex)
             {

@@ -19,8 +19,7 @@ namespace Rabbit.Tests.AI
             lastPosition = depart;
             while (lastPosition != destination && i < maxIteration)
             {
-                var map = new DistanceMap(world, 0);
-                map.AddRiskBaffeAtCost(cost);
+                var map = new DistanceMap(world, 0, cost);
                 map.BuildAllPath();
                 var dir = map.MoveTo(destination);
                 directions.Add(dir.Value);
@@ -96,8 +95,6 @@ namespace Rabbit.Tests.AI
             var world = AWorld.GivenWorld()
                 .WithPlayer(depart.X, depart.Y)
                 .WithPlayer(obstacle.X, obstacle.Y);
-            var map = new DistanceMap(world, 0);
-            map.AddRiskBaffeAtCost(3);
 
             var destination = new Point(11, 5);
             Point lastPosition;
