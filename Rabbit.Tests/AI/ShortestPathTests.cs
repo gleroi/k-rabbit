@@ -19,7 +19,7 @@ namespace Rabbit.Tests.AI
             lastPosition = depart;
             while (lastPosition != destination && i < maxIteration)
             {
-                var map = new DistanceMap(world, 0, cost);
+                var map = new DistanceMap(world, 0, cost, null);
                 map.BuildAllPath();
                 var dir = map.MoveTo(destination);
                 directions.Add(dir.Value);

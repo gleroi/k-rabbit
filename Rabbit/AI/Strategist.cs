@@ -18,13 +18,14 @@ namespace Rabbit.AI
         private Func<WorldState, Direction> SelectTactic(WorldState world)
         {
             var me = world.Players[this.Id];
-            var cpt = this.GetClosestCompteurDist(world);
+            var cpt = this.FindClosestFreeCompteur(world);
 
-            if (me.HasCompteur && me.Pos.Dist(me.Caddy) > world.RemainingRounds || 
-                !me.HasCompteur && me.Pos.Dist(me.Caddy) + (me.Pos.Dist(world.Compteurs[cpt].Pos) * 2) > world.RemainingRounds)
+            if (cpt == -1 ||
+                me.HasCompteur && me.Pos.Dist(me.Caddy) > world.RemainingRounds || // caddy trop loin 
+                !me.HasCompteur && me.Pos.Dist(world.Compteurs[cpt].Pos) + me.Caddy.Dist(world.Compteurs[cpt].Pos) > world.RemainingRounds) // compteur trop loin
             {
-                //choisir entre chopper un compteur pour 1 point ou baffer un lapinou
-                //penser au bouclier des lapinous baffés
+                int closestPlayer = this.FindClosestRabbit(world);
+                return (aWorld) => this.GoBaffePlayer(aWorld, closestPlayer);
             }
 
             if (!me.HasCompteur)

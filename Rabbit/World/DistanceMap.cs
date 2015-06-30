@@ -40,7 +40,7 @@ namespace Rabbit.World
         }
     }
 
-    struct MapCell
+    internal struct MapCell
     {
         public int Cost;
         public int Score;
@@ -49,7 +49,7 @@ namespace Rabbit.World
         {
             this.Cost = cost;
             this.Score = score;
-        } 
+        }
     }
 
     internal class DistanceMap
@@ -67,18 +67,19 @@ namespace Rabbit.World
         private const int BAFFE_SCORE = 2;
         private const int COMPTEUR_RAMASSE = 1;
         private const int INVALID_MOVE = -5;
+        private const int COMPTEUR_HOME = 30;
 
-        public DistanceMap(WorldState world, int me, int baffe)
+        public DistanceMap(WorldState world, int me, int baffe, int? lastPlayerAttacked)
         {
             this.World = world;
             this.Me = me;
             var mePt = this.World.Players[this.Me].Pos;
             this.depart = new Point(mePt.X, mePt.Y);
-            this.BuildDistanceMap();
+            this.BuildDistanceMap(lastPlayerAttacked);
             this.AddRiskBaffeAtCost(baffe);
         }
 
-        private void BuildDistanceMap()
+        private void BuildDistanceMap(int? lastPlayerAttacked)
         {
             for (int y = 0; y < DistanceMap.MAP_HEIGHT; y++)
             {
@@ -89,26 +90,42 @@ namespace Rabbit.World
             }
             for (int p = 0; p < this.World.Players.Count; p++)
             {
+                var player = this.World.Players[p].Pos;
+                var hasCompteur = this.World.Players[p].HasCompteur;
+                var home = this.World.Caddies[p].Pos;
                 if (p != this.Me)
                 {
-                    var player = this.World.Players[p].Pos;
-                    var home = this.World.Caddies[p].Pos;
-                    this.Data[player.X, player.Y] = new MapCell(5000, INVALID_MOVE);
+                    this.Data[player.X, player.Y] = new MapCell(5000, DistanceMap.INVALID_MOVE);
                     if (player != home)
                     {
-                        var adjacents = player.Adjacents();
-                        foreach (var adj in adjacents)
+                        if (lastPlayerAttacked.HasValue && lastPlayerAttacked.Value != p)
                         {
-                            var cell = this.Data[adj.X, adj.Y];
-                            this.Data[adj.X, adj.Y] = new MapCell(cell.Cost, cell.Score + BAFFE_SCORE);
+                            var adjacents = player.Adjacents();
+                            foreach (var adj in adjacents)
+                            {
+                                if (this.IsInBound(adj))
+                                {
+                                    var cell = this.Data[adj.X, adj.Y];
+                                    this.Data[adj.X, adj.Y] = new MapCell(cell.Cost, cell.Score + DistanceMap.BAFFE_SCORE);
+                                }
+                            }
                         }
+                    }
+                }
+                else
+                {
+                    if (hasCompteur)
+                    {
+                        var cell = this.Data[home.X, home.Y];
+                       this.Data[home.X, home.Y] = new MapCell(cell.Cost, cell.Score + COMPTEUR_HOME);
                     }
                 }
             }
             for (int c = 0; c < this.World.Compteurs.Count; c++)
             {
                 var cpt = this.World.Compteurs[c].Pos;
-                this.Data[cpt.X, cpt.Y] = new MapCell(1, 1);
+                var cell = this.Data[cpt.X, cpt.Y];
+                this.Data[cpt.X, cpt.Y] = new MapCell(cell.Cost, cell.Score + COMPTEUR_RAMASSE);
             }
         }
 
@@ -163,7 +180,17 @@ namespace Rabbit.World
 
         public int Cost(Point destination)
         {
-            return this.cameFrom[destination].Cost;
+            StarPoint dest;
+            int cost = 1024;
+            if (this.cameFrom.TryGetValue(destination, out dest))
+            {
+                cost = dest.Cost;
+            }
+            else
+            {
+                Log.Error("Player {0} asks unknown cost from {1} to {2}", this.Me, this.depart, destination);
+            }
+            return cost;
         }
 
         public Direction? MoveTo(Point destination)
@@ -175,12 +202,12 @@ namespace Rabbit.World
             {
                 next = current;
                 current = this.cameFrom[current].Position;
-                directions.Add(GetDirection(next, current));
+                directions.Add(DistanceMap.GetDirection(next, current));
             }
 
-            Log.Info("Player {0} going to {1} selected path: {2}, score {3}", this.Me, destination.ToString(), 
-                String.Join(",", directions.Select(d => d.ToString()).Reverse()),
-                this.cameFrom[destination].Score);
+            Log.Info("Player {0} going to {1} selected path: {2}, score {3}", this.Me, destination.ToString(),
+                     String.Join(",", directions.Select(d => d.ToString()).Reverse()),
+                     this.cameFrom[destination].Score);
 
             return DistanceMap.GetDirection(next, current);
         }
@@ -245,7 +272,7 @@ namespace Rabbit.World
         private bool IsInBound(Point pt)
         {
             return !(pt.X < 0 || pt.Y < 0
-                || pt.X >= DistanceMap.MAP_WIDTH || pt.Y >= DistanceMap.MAP_HEIGHT);
+                     || pt.X >= DistanceMap.MAP_WIDTH || pt.Y >= DistanceMap.MAP_HEIGHT);
         }
     }
 }
