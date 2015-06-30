@@ -223,12 +223,19 @@ namespace Rabbit.AI
         public Direction GoClosestCompteur(WorldState world)
         {
             // utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
+            var cpt = this.GetClosestCompteurDist(world);
+          
+            var direction = this.MoveToByShortestPath(world, world.Compteurs[cpt].Pos);
+            return direction;
+        }
+
+        public int GetClosestCompteurDist(WorldState world)
+        {
+            // utiliser un MoveTo ou on ne se preoccupe pas de prendre une baffe
             this.Distances.AddRiskBaffeAtCost(2);
             this.Distances.BuildAllPath();
 
-            var cpt = this.FindClosestCompteur(world);
-            var direction = this.MoveToByShortestPath(world, world.Compteurs[cpt].Pos);
-            return direction;
+            return this.FindClosestCompteur(world);
         }
 
         public Direction Decide(WorldState world)
