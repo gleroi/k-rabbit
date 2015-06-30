@@ -49,7 +49,16 @@ namespace Rabbit
                 Task task = new Task(
                     () =>
                     {
-                        var rabbit = new KRabbit(subId, new Strategist(subId), GameId);
+                        Ai ai = null;
+                        if (subId%2 == 0)
+                        {
+                            ai = new Strategist(subId);
+                        }
+                        else
+                        {
+                            ai = new CompteurHomeAi(subId);
+                        }
+                        var rabbit = new KRabbit(subId, ai, GameId);
                         rabbit.Run();
                     });
                 task.Start();

@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="AI\Ai.cs" />
     <Compile Include="AI\BaffeAi.cs" />
+    <Compile Include="AI\CompteurHomeAi.cs" />
     <Compile Include="AI\GoCompteur.cs" />
     <Compile Include="AI\GoHome.cs" />
     <Compile Include="AI\Strategist.cs" />
