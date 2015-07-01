@@ -49,7 +49,6 @@ namespace Game
                 manager.StopGame(GameId, TeamId, Secret);
                 throw;
             }
-
         }
 
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)

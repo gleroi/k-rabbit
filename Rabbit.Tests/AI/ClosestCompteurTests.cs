@@ -13,7 +13,9 @@ namespace Rabbit.Tests.AI
         {
             var world = AWorld.GivenWorld()
                 .WithCompteur(x1, y1)
+                .WithCaddy(0, 1)
                 .WithCompteur(x2, y2)
+                .WithCaddy(0, 3)
                 .WithPlayer(1, 6);
             var ai = new GoCompteur(0);
 
@@ -30,7 +32,9 @@ namespace Rabbit.Tests.AI
         {
             var world = AWorld.GivenWorld()
                 .WithPlayer(1, 1)
+                .WithCaddy(0, 1)
                 .WithPlayer(1, 6)
+                .WithCaddy(0, 3)
                 .WithCompteur(x1, y1)
                 .WithCompteur(x2, y2);
 

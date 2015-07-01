@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Rabbit.World
 {
@@ -73,9 +72,9 @@ namespace Rabbit.World
             result[3] = new Point(this.X - 1, this.Y);
             return result;
         }
-        
+
         /// <summary>
-        /// Manhattan distance
+        ///     Manhattan distance
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
@@ -84,11 +83,14 @@ namespace Rabbit.World
             return Math.Abs(p.X - this.X) + Math.Abs(p.Y - this.Y);
         }
 
-        static int Square(int x) { return x * x; }
+        private static int Square(int x)
+        {
+            return x*x;
+        }
 
         internal double EuclidianDist(Point p)
         {
-            return Math.Sqrt(Square(p.X - this.X) + Square(p.Y - this.Y));
+            return Math.Sqrt(Point.Square(p.X - this.X) + Point.Square(p.Y - this.Y));
         }
 
         public override string ToString()
@@ -133,7 +135,6 @@ namespace Rabbit.World
             this.Caddy = caddy;
         }
 
-
         internal void IncreaseScore(int inc)
         {
             this.Score += inc;
@@ -145,7 +146,11 @@ namespace Rabbit.World
         public readonly Point Pos;
         public int PlayerId { get; private set; }
 
-        public bool IsOwned { get { return this.PlayerId != -1; } }
+        public bool IsOwned
+        {
+            get { return this.PlayerId != -1; }
+        }
+
         public Compteur(int x, int y)
             : this()
         {
@@ -175,7 +180,7 @@ namespace Rabbit.World
         Nothing = 0,
         Impossible = 2,
         RiskBaffe = 4,
-        Baffable = 8,
+        Baffable = 8
     }
 
     internal class WorldState
@@ -216,7 +221,7 @@ namespace Rabbit.World
             return world;
         }
 
-        private void Initialize()
+        public void Initialize()
         {
             int len = this.Players.Count;
             for (int i = 0; i < len; i++)
@@ -229,7 +234,7 @@ namespace Rabbit.World
             }
         }
 
-        private void CheckCompteur(ref Player player)
+        internal void CheckCompteur(ref Player player)
         {
             if (!player.HasCompteur)
             {

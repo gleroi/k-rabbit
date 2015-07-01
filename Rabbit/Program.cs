@@ -19,7 +19,6 @@ namespace Rabbit
 
         public static string Host; // = "battle.gate.vm.gate.erdf.fr";
 
-
         private static void Main(string[] args)
         {
             if (args.Length != 3)

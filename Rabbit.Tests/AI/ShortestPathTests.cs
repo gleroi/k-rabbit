@@ -40,10 +40,12 @@ namespace Rabbit.Tests.AI
         public void BasicMove_ShouldSucceed(int x, int y, Direction expectedDirection)
         {
             var world = AWorld.GivenWorld()
-                .WithPlayer(5, 5);
+                .WithPlayer(5, 5)
+                .WithCaddy(0, 1);
 
             Point lastPosition;
-            List<Direction> directions = WhenMoving(world, new Point(5,5), new Point(x, y), out lastPosition);
+            List<Direction> directions = ShortestPathTests.WhenMoving(world, new Point(5, 5), new Point(x, y),
+                                                                      out lastPosition);
             Assert.Equal(new List<Direction> {expectedDirection}, directions);
         }
 
@@ -52,11 +54,12 @@ namespace Rabbit.Tests.AI
         {
             var depart = new Point(5, 5);
             var world = AWorld.GivenWorld()
-                .WithPlayer(depart.X, depart.Y);
-            
+                .WithPlayer(depart.X, depart.Y)
+                .WithCaddy(0, 1);
+
             var destination = new Point(10, 3);
             Point lastPosition;
-            List<Direction> directions = WhenMoving(world, depart, destination, out lastPosition);
+            List<Direction> directions = ShortestPathTests.WhenMoving(world, depart, destination, out lastPosition);
 
             Assert.Equal(destination, lastPosition);
             Assert.Equal(new[]
@@ -72,19 +75,20 @@ namespace Rabbit.Tests.AI
         {
             var depart = new Point(5, 5);
             var world = AWorld.GivenWorld()
-                .WithPlayer(depart.X, depart.Y);
+                .WithPlayer(depart.X, depart.Y)
+                .WithCaddy(0, 1);
 
             var destination = new Point(0, 7);
             Point lastPosition;
-            List<Direction> directions = WhenMoving(world, depart, destination, out lastPosition);
+            List<Direction> directions = ShortestPathTests.WhenMoving(world, depart, destination, out lastPosition);
 
             Assert.Equal(destination, lastPosition);
             Assert.Equal(new[]
             {
                 Direction.O, Direction.O, Direction.O, Direction.O, Direction.O,
-                Direction.S, Direction.S,
+                Direction.S, Direction.S
             },
-            directions);
+                         directions);
         }
 
         [Fact]
@@ -94,19 +98,22 @@ namespace Rabbit.Tests.AI
             var obstacle = new Point(8, 5);
             var world = AWorld.GivenWorld()
                 .WithPlayer(depart.X, depart.Y)
-                .WithPlayer(obstacle.X, obstacle.Y);
+                .WithCaddy(0, 1)
+                .WithPlayer(obstacle.X, obstacle.Y)
+                .WithCaddy(0, 3);
 
             var destination = new Point(11, 5);
             Point lastPosition;
-            List<Direction> directions = WhenMoving(world, depart, destination, out lastPosition, 3, 20);
+            List<Direction> directions = ShortestPathTests.WhenMoving(world, depart, destination, out lastPosition, 3,
+                                                                      20);
 
             Assert.Equal(destination, lastPosition);
             Assert.Equal(new[]
             {
-                Direction.N, Direction.N, Direction.N, 
+                Direction.N, Direction.N, Direction.N,
                 Direction.E, Direction.E, Direction.E, Direction.E,
                 Direction.S, Direction.E,
-                Direction.S, Direction.E, 
+                Direction.S, Direction.E,
                 Direction.S
             }, directions);
         }
