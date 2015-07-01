@@ -21,8 +21,7 @@ namespace Rabbit.Tests.World
          InlineData(8, 9, Direction.O),
          InlineData(9, 8, Direction.N),
          InlineData(9, 10, Direction.S)]
-        public void Move_ShouldNotChangeScore
-            (int x, int y, Direction direction)
+        public void Move_ShouldNotChangeScore(int x, int y, Direction direction)
         {
             var world = this.GivenWorld(9, 9, 0, 0);
 
