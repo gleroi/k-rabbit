@@ -15,33 +15,26 @@ namespace Rabbit
         public static int TeamId = 170;
         public static string Secret = "mUrUs2";
 
-        public static int Port = 2026;
+        public static int Port; //= 2026;
 
-        public static string Host = "battle.gate.vm.gate.erdf.fr";
+        public static string Host; // = "battle.gate.vm.gate.erdf.fr";
 
-        public static int GameId = -1;
 
         private static void Main(string[] args)
         {
-            if (args.Length != 2 && args.Length != 0)
+            if (args.Length != 3)
             {
-                Console.WriteLine("usage: rabbit.exe <host> <port>");
-            }
-
-            ConfigLog();
-
-            var manager = new GameManager();
-
-            GameId = manager.Create(TeamId, Secret);
-
-            Log.Debug("Game ID is : " + GameId);
-
-            if (GameId == -1)
-            {
+                Console.WriteLine("usage: rabbit.exe <host> <port> <gameId>");
                 return;
             }
 
-            const int MAX_RABBITS = 6;
+            Program.Host = args[0];
+            Program.Port = int.Parse(args[1]);
+            int GameId = int.Parse(args[2]);
+
+            ConfigLog();
+
+            const int MAX_RABBITS = 1;
             var rabbits = new Task[MAX_RABBITS];
             for (int i = 0; i < MAX_RABBITS; i++)
             {
@@ -49,15 +42,7 @@ namespace Rabbit
                 Task task = new Task(
                     () =>
                     {
-                        Ai ai = null;
-                        if (subId%2 == 0)
-                        {
-                            ai = new Strategist(subId);
-                        }
-                        else
-                        {
-                            ai = new CompteurHomeAi(subId);
-                        }
+                        Ai ai = new Strategist(subId);
                         var rabbit = new KRabbit(subId, ai, GameId);
                         rabbit.Run();
                     });
@@ -65,26 +50,7 @@ namespace Rabbit
                 rabbits[i] = task;
             }
 
-            Console.CancelKeyPress += Console_CancelKeyPress;
-
-            try
-            {
-#if DEBUG
-                Thread.Sleep(1000);
-
-                Process.Start(GameManager.BASE + "?gameId=" + GameId);
-
-                manager.StartGame(GameId, TeamId, Secret);
-#endif
-                Task.WaitAll(rabbits);
-            }
-            catch (Exception)
-            {
-#if DEBUG
-                manager.StopGame(GameId, TeamId, Secret);
-#endif
-                throw;
-            }
+            Task.WaitAll(rabbits);
         }
 
         private static void ConfigLog()
@@ -105,12 +71,6 @@ namespace Rabbit
             LogManager.Configuration = config;
         }
 
-        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
-        {
-#if DEBUG
-            var manager = new GameManager();
-            manager.StopGame(GameId, TeamId, Secret);
-#endif
-        }
+
     }
 }

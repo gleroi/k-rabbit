@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace Rabbit.Client
+namespace Game
 {
     internal class GameManager
     {

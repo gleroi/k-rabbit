@@ -58,12 +58,10 @@
     <Compile Include="AI\ClosestCompteurTests.cs" />
     <Compile Include="AI\MoveToTests.cs" />
     <Compile Include="AI\ShortestPathTests.cs" />
-    <Compile Include="AI\TreeTests.cs" />
     <Compile Include="APlayer.cs" />
     <Compile Include="AWorld.cs" />
     <Compile Include="Client\AMessage.cs" />
     <Compile Include="Client\ConnectionTests.cs" />
-    <Compile Include="Client\GameManagerTests.cs" />
     <Compile Include="Client\SocketFake.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -73,8 +71,6 @@
     <Compile Include="World\Parser\ParserTests.cs" />
     <Compile Include="World\Parser\ReadDigitTests.cs" />
     <Compile Include="World\Parser\WorldParserTests.cs" />
-    <Compile Include="World\World_BasicMoveTests.cs" />
-    <Compile Include="World\World_MoveCompteur.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rabbit\Rabbit.csproj">
