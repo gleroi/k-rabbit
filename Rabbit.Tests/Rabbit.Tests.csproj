@@ -72,6 +72,7 @@
     <Compile Include="World\Parser\ReadDigitTests.cs" />
     <Compile Include="World\Parser\WorldParserTests.cs" />
     <Compile Include="World\WorldSimulator_MoveTests.cs" />
+    <Compile Include="World\WorldSimulator_ScoreTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rabbit\Rabbit.csproj">
