@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Game
 {
-    class Program
+    internal class Program
     {
         public static int TeamId = 170;
         public static string Secret = "mUrUs2";
         public static int GameId = -1;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var manager = new GameManager();
 
-            int GameId = manager.Create(TeamId, Secret);
+            int GameId = manager.Create(Program.TeamId, Program.Secret);
 
             Log.Debug("Game ID is : " + GameId);
             Console.WriteLine("Game ID is : " + GameId);
@@ -28,7 +23,7 @@ namespace Game
                 return;
             }
 
-            Console.CancelKeyPress += Console_CancelKeyPress;
+            Console.CancelKeyPress += Program.Console_CancelKeyPress;
 
             try
             {
@@ -37,16 +32,16 @@ namespace Game
 
                 Process.Start(GameManager.BASE + "?gameId=" + GameId);
 
-                manager.StartGame(GameId, TeamId, Secret);
+                manager.StartGame(GameId, Program.TeamId, Program.Secret);
 
                 Console.WriteLine("Press any key to stop game...");
                 Console.ReadKey();
 
-                manager.StopGame(GameId, TeamId, Secret);
+                manager.StopGame(GameId, Program.TeamId, Program.Secret);
             }
             catch (Exception)
             {
-                manager.StopGame(GameId, TeamId, Secret);
+                manager.StopGame(GameId, Program.TeamId, Program.Secret);
                 throw;
             }
         }
@@ -54,7 +49,7 @@ namespace Game
         private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
             var manager = new GameManager();
-            manager.StopGame(GameId, TeamId, Secret);
+            manager.StopGame(Program.GameId, Program.TeamId, Program.Secret);
         }
     }
 }
