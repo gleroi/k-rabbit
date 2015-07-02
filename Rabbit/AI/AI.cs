@@ -11,7 +11,7 @@ namespace Rabbit.AI
     /// </summary>
     internal abstract class Ai
     {
-        protected readonly int Id;
+        public int Id;
         protected Map Map;
         protected DistanceMap Distances;
         protected int? LastPlayerAttacked;
@@ -252,8 +252,10 @@ namespace Rabbit.AI
             var direction = this.InnerDecide(world);
 
             var next = world.Players[this.Id].Pos.Move(direction);
+            int meId = world.Players[this.Id].Id;
+
             var adjacents = next.Adjacents();
-            var baffedPlayers = world.Players.Where(p => p.Id != this.Id
+            var baffedPlayers = world.Players.Where(p => p.Id != meId
                 && adjacents.Any(adj => adj == p.Pos)).ToList();
             if (baffedPlayers.Count == 1)
             {

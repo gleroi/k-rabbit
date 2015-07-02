@@ -37,7 +37,7 @@ namespace Rabbit
             var rabbits = new Task[MAX_RABBITS];
             for (int i = 0; i < MAX_RABBITS; i++)
             {
-                var subId = i;
+                var subId = 5;
                 Task task = new Task(
                     () =>
                     {

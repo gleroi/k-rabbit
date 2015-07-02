@@ -112,7 +112,7 @@ namespace Rabbit.World
                 int score = this.ReadInt();
                 this.Read(',');
                 PlayerState state = this.ReadState();
-                players.Add(new Player(i, x, y, score, state));
+                players.Add(new Player(id, x, y, score, state));
                 i += 1;
                 if (this.Current == ':')
                 {

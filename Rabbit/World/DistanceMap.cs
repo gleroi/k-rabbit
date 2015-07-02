@@ -90,6 +90,7 @@ namespace Rabbit.World
             }
             for (int p = 0; p < this.World.Players.Count; p++)
             {
+                var pp = this.World.Players[p];
                 var player = this.World.Players[p].Pos;
                 var hasCompteur = this.World.Players[p].HasCompteur;
                 var home = this.World.Caddies[p].Pos;
@@ -98,7 +99,7 @@ namespace Rabbit.World
                     this.Data[player.X, player.Y] = new MapCell(5000, DistanceMap.INVALID_MOVE);
                     if (player != home)
                     {
-                        if (lastPlayerAttacked.HasValue && lastPlayerAttacked.Value != p)
+                        if (lastPlayerAttacked.HasValue && lastPlayerAttacked.Value != pp.Id)
                         {
                             var adjacents = player.Adjacents();
                             foreach (var adj in adjacents)
