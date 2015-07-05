@@ -12,7 +12,6 @@ namespace Rabbit.AI
     internal abstract class Ai
     {
         public int Id;
-        protected Map Map;
         protected DistanceMap Distances;
         protected int? LastPlayerAttacked;
 
@@ -130,69 +129,7 @@ namespace Rabbit.AI
         public Direction MoveToByShortestPath(WorldState world, Point cpos)
         {
             var direction = this.Distances.MoveTo(cpos);
-
-            if (!direction.HasValue)
-            {
-                direction = this.MoveTo(world, cpos, state => !state.HasFlag(CellState.Impossible));
-            }
             return direction.GetValueOrDefault(Direction.E);
-        }
-
-        public Direction MoveTo(WorldState world, Point cpos, Func<CellState, bool> strategy)
-        {
-            var me = world.Players[this.Id].Pos;
-            var bestmoves = GetMoveInOrder(cpos, me);
-
-
-            var direction = FirstBest(bestmoves, me, strategy);
-
-            Log.Debug("Player {0} best move is {1}", this.Id, direction);
-
-            if (!direction.HasValue)
-            {
-                Log.Debug("Player {0} has no safe moves", this.Id, String.Join(",", bestmoves));
-
-                direction = FirstBest(bestmoves, me, state => !state.HasFlag(CellState.Impossible));
-
-                Log.Debug("Player {0} second best move is {1}", this.Id, direction);
-
-            }
-            var move = direction.GetValueOrDefault(Direction.E);
-
-            Log.Debug("Player {0} move is {1}", this.Id, move);
-
-            return move;
-        }
-
-        private Direction? FirstBest(List<Direction> bestmoves, Point me, Func<CellState, bool> predicate)
-        {
-            foreach (var direction in bestmoves)
-            {
-                var nextPos = me.Move(direction);
-                var state = this.Map.GetCell(nextPos);
-                if (predicate(state))
-                {
-                    return direction;
-                }
-            }
-            return null;
-        }
-
-        private List<Direction> GetMoveInOrder(Point cpos, Point me)
-        {
-            var dirs = new List<Tuple<double, Direction>>();
-
-            for (int i = 0; i < 4; i++)
-            {
-                var direction = (Direction)i;
-                var next = me.Move(direction);
-                dirs.Add(new Tuple<double, Direction>(cpos.Dist(next), direction));
-            }
-            dirs.Sort();
-
-            Log.Debug("Player {0} best moves are {1}", this.Id, String.Join(",", dirs));
-
-            return dirs.Select(t => t.Item2).ToList();
         }
 
         public Direction GoHome(WorldState world)
@@ -245,7 +182,6 @@ namespace Rabbit.AI
 
         public Direction Decide(WorldState world)
         {
-            this.Map = new Map(world, this.Id);
             this.Distances = new DistanceMap(world, this.Id, 2, this.LastPlayerAttacked);
             this.Distances.BuildAllPath();
 

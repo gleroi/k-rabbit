@@ -91,7 +91,6 @@
     <Compile Include="Client\Socket.cs" />
     <Compile Include="World\WorldSimulator.cs" />
     <Compile Include="World\DistanceMap.cs" />
-    <Compile Include="World\Map.cs" />
     <Compile Include="World\UnexpectedTokenException.cs" />
     <Compile Include="World\WorldParser.cs" />
     <Compile Include="World\WorldState.cs" />

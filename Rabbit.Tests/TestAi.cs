@@ -13,7 +13,6 @@ namespace Rabbit.Tests
         public TestAi(int id, WorldState world)
             : base(id)
         {
-            this.Map = new Map(world, id);
         }
 
         protected override Direction InnerDecide(WorldState world)
