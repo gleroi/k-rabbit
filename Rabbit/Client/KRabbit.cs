@@ -17,7 +17,7 @@ namespace Rabbit.Client
         {
             this.Id = id;
             this.Ai = ai;
-            this.Client = new Client(new Connection(Program.Host, Program.Port, new SocketWrapper()), Program.Secret,
+            this.Client = new Client(new Connection(Program.Host, Program.Port, new ClientSocketWrapper()), Program.Secret,
                                      gameId, Program.TeamId);
         }
 

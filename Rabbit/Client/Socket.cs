@@ -10,7 +10,7 @@ namespace Rabbit.Client
         int Receive(byte[] data);
     }
 
-    internal class SocketWrapper : ISocket
+    internal class ClientSocketWrapper : ISocket
     {
         private Socket server;
 
